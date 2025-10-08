@@ -1,0 +1,48 @@
+﻿@model IEnumerable<course.Models.Instructor>
+@foreach(var item in Model.Take(4)){
+    <div class="col-xl-3 col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+        <div class="instructor-card">
+            <div class="instructor-image">
+                <img src="~/img/education/teacher-2.webp" class="img-fluid" alt="">
+                <div class="overlay-content">
+                    <div class="rating-stars">
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-half"></i>
+                        <span>4.8</span>
+                    </div>
+                    <div class="course-count">
+                        <i class="bi bi-play-circle"></i>
+                        <span>@item.Courses.Count() Khóa học</span>
+                    </div>
+                </div>
+            </div>
+            <div class="instructor-info">
+                <h5>@item.User.FullName</h5>
+                <p class="specialty">@item.MainSubject</p>
+                <p class="description">@item.Bio</p>
+                <div class="stats-grid">
+                    <div class="stat">
+                        <span class="number">
+                            4.5
+                        </span>
+                        <span class="label">Học viên</span>
+                    </div>
+                    <div class="stat">
+                        <span class="number">4.8</span>
+                        <span class="label">Rating</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <a href="#" class="btn-view">Xem hồ sơ</a>
+                    <div class="social-links">
+                        <a href="#"><i class="bi bi-linkedin"></i></a>
+                        <a href="#"><i class="bi bi-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

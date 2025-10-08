@@ -1,0 +1,26 @@
+﻿@model IEnumerable<course.Models.WebsiteReview>
+
+@foreach(var item in Model){
+    <div class="swiper-slide">
+        <div class="testimonial-item">
+            <div class="stars">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+            </div>
+            <p>
+               @item.Comment
+            </p>
+            <div class="testimonial-profile">
+                <img src="~/img/person/person-f-1.webp" alt="Reviewer" class="img-fluid rounded-circle">
+                <div>
+                    <h3>@item.User.FullName</h3>
+                    <h4>@item.User.Email</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

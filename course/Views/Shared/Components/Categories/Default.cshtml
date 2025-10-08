@@ -1,0 +1,12 @@
+﻿@model IEnumerable<dynamic>
+@foreach(var item in Model){
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6" data-aos="zoom-in" data-aos-delay="350">
+        <a href="courses.html" class="category-card category-communication">
+            <div class="category-icon">
+                <i class="bi bi-chat-dots"></i>
+            </div>
+            <h5>@item.Name</h5>
+            <span class="course-count">@item.CourseCount </span>
+        </a>
+    </div>
+}

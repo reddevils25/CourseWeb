@@ -1,0 +1,55 @@
+﻿@model IEnumerable<course.Models.Course>
+@foreach(var item in Model.Take(6)){
+
+    string sUrl = $"/course/{item.Alias}-{item.CourseId}.html";
+    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+        <div class="course-card">
+            <div class="course-image">
+                <img src="~/img/education/students-9.webp" alt="Course" class="img-fluid">
+                <div class="badge featured">@item.IsFeatured</div>
+                <div class="price-badge">@item.Price $</div>
+            </div>
+            <div class="course-content">
+                <div class="course-meta">
+                    @{
+                        var levelText = (item.Level ?? "").Trim() switch
+                        {
+                            "Beginner" => "Cơ bản",
+                            "Intermediate" => "Trung cấp",
+                            "Advanced" => "Nâng cao",
+                            _ => "Không xác định"
+                        };
+                    }
+                    <span class="level">@levelText</span>
+                    <span class="duration">8 Weeks</span>
+                </div>
+                <h3><a href="@sUrl">@item.Title</a></h3>
+                <p>@item.Description</p>
+                <div class="instructor">
+                    <img src="~/img/person/person-f-3.webp" alt="Instructor" class="instructor-img">
+                    <div class="instructor-info">
+                        <h6>@item.Instructor.User.FullName</h6>
+                        <span>@item.Instructor.Bio</span>
+                    </div>
+                </div>
+                <div class="course-stats">
+                    <div class="rating">
+                        @for(var i = 0; i< item.Rating; i++){
+                            <i class="bi bi-star-fill"></i>
+                        }
+                      
+                       
+                        <span>@item.Rating</span>
+                    </div>
+                    <div class="students">
+                        <i class="bi bi-people-fill"></i>
+                        <span>@item.EnrollCount Sinh viên</span>
+                    </div>
+                </div>
+                <a href="enroll.html" class="btn-course">Đăng ký ngay</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- End Course Item -->
+}
