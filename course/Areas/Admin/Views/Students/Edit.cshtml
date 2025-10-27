@@ -1,0 +1,79 @@
+﻿@model course.Models.Student
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content">
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4" style="width: 200%;">
+            <div class="col-sm-12 col-xl-6">
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">Sửa thông tin sinh viên</h6>
+
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="StudentId" />
+                        <input type="hidden" asp-for="UserId" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <h5>Thông tin tài khoản</h5>
+                        <div class="mb-3">
+                            <label>Họ và tên</label>
+                            <input name="User.FullName" value="@Model.User?.FullName" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Email</label>
+                            <input name="User.Email" value="@Model.User?.Email" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Mật khẩu (để trống nếu không đổi)</label>
+                            <input name="User.PasswordHash" type="password" class="form-control" />
+                        </div>
+
+                        <h5>Thông tin sinh viên</h5>
+                        <div class="mb-3">
+                            <label asp-for="StudentCode">Mã sinh viên</label>
+                            <input asp-for="StudentCode" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DateOfBirth">Ngày sinh</label>
+                            <input asp-for="DateOfBirth" type="date" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Gender">Giới tính</label>
+                            <select asp-for="Gender" class="form-control">
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Address">Địa chỉ</label>
+                            <input asp-for="Address" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Phone">Số điện thoại</label>
+                            <input asp-for="Phone" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="EnrollmentDate">Ngày tạo</label>
+                            <input asp-for="EnrollmentDate" type="date" class="form-control" />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <input type="submit" value="Cập nhật" class="btn btn-success" />
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

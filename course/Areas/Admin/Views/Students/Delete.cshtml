@@ -1,0 +1,56 @@
+﻿@model course.Models.Student
+
+@{
+    ViewData["Title"] = "Xóa sinh viên";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content">
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4" style="width: 200%;">
+            <div class="col-sm-12 col-xl-6">
+                <div class="bg-light rounded h-100 p-4">
+                    <h4 class="mb-4 text-danger">Xóa sinh viên</h4>
+                    <h6 class="text-warning">Bạn có chắc chắn muốn xóa sinh viên này không? Hành động này không thể hoàn tác!</h6>
+                    <hr />
+
+                    <dl class="row">
+                        <dt class="col-sm-4">Họ và tên</dt>
+                        <dd class="col-sm-8">@Model.User?.FullName</dd>
+
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">@Model.User?.Email</dd>
+
+                        <dt class="col-sm-4">Ngày sinh</dt>
+                        <dd class="col-sm-8">@Model.DateOfBirth?.ToString("dd/MM/yyyy")</dd>
+
+                        <dt class="col-sm-4">Giới tính</dt>
+                        <dd class="col-sm-8">@Model.Gender</dd>
+
+                        <dt class="col-sm-4">Địa chỉ</dt>
+                        <dd class="col-sm-8">@Model.Address</dd>
+
+                        <dt class="col-sm-4">Số điện thoại</dt>
+                        <dd class="col-sm-8">@Model.Phone</dd>
+
+                        <dt class="col-sm-4">Ngày nhập học</dt>
+                        <dd class="col-sm-8">@Model.EnrollmentDate?.ToString("dd/MM/yyyy")</dd>
+                    </dl>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="StudentId" />
+                        <input type="hidden" asp-for="UserId" />
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="submit" class="btn btn-danger btn-lg rounded-pill shadow-lg border-0">
+                                <i class="fas fa-trash-alt"></i> Xóa
+                            </button>
+                            <a asp-action="Index" class="btn btn-primary btn-lg rounded-pill shadow-lg border-0">
+                                <i class="fas fa-undo"></i> Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

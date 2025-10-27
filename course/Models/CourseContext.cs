@@ -39,6 +39,8 @@ public partial class CourseContext : DbContext
 
     public virtual DbSet<Menu> Menus { get; set; }
 
+    public virtual DbSet<Student> Students { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<WebsiteReview> WebsiteReviews { get; set; }
@@ -242,6 +244,27 @@ public partial class CourseContext : DbContext
             entity.Property(e => e.SortOrder).HasDefaultValue(0);
             entity.Property(e => e.Title).HasMaxLength(200);
             entity.Property(e => e.Url).HasMaxLength(255);
+        });
+
+        modelBuilder.Entity<Student>(entity =>
+        {
+            entity.HasKey(e => e.StudentId).HasName("PK__Students__32C52B997AA5CEE1");
+
+            entity.Property(e => e.Address).HasMaxLength(255);
+            entity.Property(e => e.EnrollmentDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Gender).HasMaxLength(10);
+            entity.Property(e => e.Phone).HasMaxLength(20);
+            entity.Property(e => e.StudentCode)
+                .HasMaxLength(5)
+                .IsUnicode(false)
+                .HasComputedColumnSql("('SV'+right('000'+CONVERT([varchar](3),[StudentId]),(3)))", true);
+
+            entity.HasOne(d => d.User).WithMany(p => p.Students)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Students__UserId__03F0984C");
         });
 
         modelBuilder.Entity<User>(entity =>

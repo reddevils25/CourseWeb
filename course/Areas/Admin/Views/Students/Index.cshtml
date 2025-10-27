@@ -1,0 +1,57 @@
+﻿@model IEnumerable<course.Models.Student>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content" style="margin-left: 160px;">
+    <div class="container-fluid pt-4 px-4" style="width:105%;">
+        <div class="bg-light text-center rounded p-4">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h6 class="mb-0">Quản lý sinh viên</h6>
+                <a asp-action="Create">Thêm mới</a>
+            </div>
+            <div class="no-border-box table-responsive">
+                <table class="table text-start align-middle table-bordered table-hover mb-0">
+                    <thead>
+                        <tr class="text-dark">
+                            <th scope="col">STT</th>
+                            <th scope="col">Tên sinh viên</th>
+                            <th scope="col">Mã sinh viên</th>
+                            <th scope="col">Giới tính</th>   
+                            <th scope="col">Ngày sinh</th>
+                            <th scope="col">Địa chỉ</th>
+                            <th scope="col">Số điện thoại</th> 
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@(i++)</td>
+                                <td>@Html.DisplayFor(modelItem => item.User.FullName)</td>                            
+                                <td>@Html.DisplayFor(modelItem => item.StudentCode)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Gender)</td>
+                                <td>@Html.DisplayFor(modelItem => item.DateOfBirth)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Phone)</td>
+                         
+                                <td>
+
+                                    <a asp-action="Edit" asp-route-id="@item.StudentId" class="btn btn-primary">Sửa</a>
+                                    <a asp-action="Details" asp-route-id="@item.StudentId" class="btn btn-primary">Chi tiết</a>
+                                    <a asp-action="Delete" asp-route-id="@item.StudentId" class="btn btn-danger">Xóa</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
