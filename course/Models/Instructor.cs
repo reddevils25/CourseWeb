@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 
 namespace course.Models;
@@ -23,5 +24,6 @@ public partial class Instructor
 
     public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
 
+    [ValidateNever]
     public virtual User User { get; set; } = null!;
 }

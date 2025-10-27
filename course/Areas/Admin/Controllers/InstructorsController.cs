@@ -109,16 +109,19 @@ namespace course.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var instructor = await _context.Instructors.FindAsync(id);
+            // Include User để tránh null reference
+            var instructor = await _context.Instructors
+                .Include(i => i.User)
+                .FirstOrDefaultAsync(i => i.InstructorId == id);
+
             if (instructor == null)
-            {
                 return NotFound();
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", instructor.UserId);
+
+            // Nếu bạn muốn dropdown chọn User (nếu có)
+            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "FullName", instructor.UserId);
+
             return View(instructor);
         }
 
@@ -127,66 +130,65 @@ namespace course.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("InstructorId,UserId,Bio,Experience,Facebook,LinkedIn,Website,MainSubject")] Instructor instructor, string FullName, string Email, string Password)
+        public async Task<IActionResult> Edit(int id, Instructor instructor)
         {
             if (id != instructor.InstructorId)
                 return NotFound();
 
-            var existingInstructor = await _context.Instructors
-                .Include(i => i.User)
-                .FirstOrDefaultAsync(i => i.InstructorId == id);
-
-            if (existingInstructor == null)
-                return NotFound();
-
             if (ModelState.IsValid)
             {
-                try
+                var existingInstructor = await _context.Instructors
+                    .Include(i => i.User)
+                    .FirstOrDefaultAsync(i => i.InstructorId == id);
+
+                if (existingInstructor == null)
+                    return NotFound();
+
+                // Cập nhật Instructor
+                existingInstructor.Bio = instructor.Bio;
+                existingInstructor.Experience = instructor.Experience;
+                existingInstructor.Facebook = instructor.Facebook;
+                existingInstructor.LinkedIn = instructor.LinkedIn;
+                existingInstructor.Website = instructor.Website;
+                existingInstructor.MainSubject = instructor.MainSubject;
+
+                // Cập nhật User từ DB, không bind trực tiếp từ form
+                if (existingInstructor.User != null)
                 {
-                    // Cập nhật thông tin người dùng
-                    existingInstructor.User.FullName = FullName;
-                    existingInstructor.User.Email = Email;
-                    if (!string.IsNullOrEmpty(Password))
-                        existingInstructor.User.PasswordHash = Password; // không mã hóa theo yêu cầu
+                    var userToUpdate = await _context.Users.FindAsync(existingInstructor.UserId);
+                    if (userToUpdate != null)
+                    {
+                        userToUpdate.FullName = Request.Form["FullName"];
+                        userToUpdate.Email = Request.Form["Email"];
 
-                    // Cập nhật thông tin giảng viên
-                    existingInstructor.Bio = instructor.Bio;
-                    existingInstructor.Experience = instructor.Experience;
-                    existingInstructor.Facebook = instructor.Facebook;
-                    existingInstructor.LinkedIn = instructor.LinkedIn;
-                    existingInstructor.Website = instructor.Website;
-                    existingInstructor.MainSubject = instructor.MainSubject;
-
-                    _context.Update(existingInstructor);
-                    await _context.SaveChangesAsync();
-
-                    return RedirectToAction(nameof(Index));
+                        var password = Request.Form["PasswordHash"];
+                        if (!string.IsNullOrWhiteSpace(password))
+                            userToUpdate.PasswordHash = password;
+                    }
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.Instructors.Any(e => e.InstructorId == instructor.InstructorId))
-                        return NotFound();
-                    else
-                        throw;
-                }
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
+
+            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "FullName", instructor.UserId);
             return View(instructor);
         }
+
+        // GET: Admin/Instructors/Delete/5
         // GET: Admin/Instructors/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
+            // Lấy Instructor kèm User
             var instructor = await _context.Instructors
                 .Include(i => i.User)
-                .FirstOrDefaultAsync(m => m.InstructorId == id);
+                .FirstOrDefaultAsync(i => i.InstructorId == id);
+
             if (instructor == null)
-            {
                 return NotFound();
-            }
 
             return View(instructor);
         }
@@ -196,13 +198,24 @@ namespace course.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var instructor = await _context.Instructors.FindAsync(id);
+            var instructor = await _context.Instructors
+                .Include(i => i.User)
+                .FirstOrDefaultAsync(i => i.InstructorId == id);
+
             if (instructor != null)
             {
+                // 1️⃣ Xóa Instructor trước
                 _context.Instructors.Remove(instructor);
+                await _context.SaveChangesAsync();
+
+                // 2️⃣ Xóa User nếu muốn (chỉ khi chắc chắn User này không dùng bảng khác)
+                if (instructor.User != null)
+                {
+                    _context.Users.Remove(instructor.User);
+                    await _context.SaveChangesAsync();
+                }
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

@@ -13,7 +13,6 @@
                     <h4 class="mb-4 text-primary">Sửa thông tin giảng viên</h4>
 
                     <form asp-action="Edit" method="post">
-                        @* ẩn ID để controller biết đối tượng nào cần sửa *@
                         <input type="hidden" asp-for="InstructorId" />
                         <input type="hidden" asp-for="UserId" />
 
@@ -21,12 +20,12 @@
 
                         <div class="mb-3">
                             <label class="form-label">Họ và tên</label>
-                            <input name="FullName" value="@Model.User?.FullName" class="form-control" required />
+                            <input name="FullName" value="@Model.User.FullName" class="form-control" required />
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input name="Email" value="@Model.User?.Email" class="form-control" required />
+                            <input name="Email" value="@Model.User.Email" class="form-control" required />
                         </div>
 
                         <div class="mb-3">

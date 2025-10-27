@@ -21,11 +21,11 @@ public partial class Course
 
     public DateTime? CreatedAt { get; set; }
 
-    public bool? IsFeatured { get; set; }
+    public bool IsFeatured { get; set; }
 
-    public bool? IsNew { get; set; }
+    public bool IsNew { get; set; }
 
-    public bool? HasCertificate { get; set; }
+    public bool HasCertificate { get; set; }
 
     public decimal? Rating { get; set; }
 

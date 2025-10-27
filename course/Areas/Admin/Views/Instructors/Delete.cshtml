@@ -1,64 +1,59 @@
 ﻿@model course.Models.Instructor
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Xóa giảng viên";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Delete</h1>
+<div class="content">
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4" style="width: 200%;">
+            <div class="col-sm-12 col-xl-6">
+                <div class="bg-light rounded h-100 p-4">
+                    <h4 class="mb-4 text-danger">Xóa giảng viên</h4>
+                    <h6 class="text-warning">Bạn có chắc chắn muốn xóa giảng viên này không? Hành động này không thể hoàn tác!</h6>
+                    <hr />
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Instructor</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Bio)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Bio)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Experience)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Experience)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Facebook)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Facebook)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LinkedIn)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LinkedIn)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Website)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Website)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MainSubject)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MainSubject)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.UserId)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="InstructorId" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+                    <dl class="row">
+                        <dt class="col-sm-4">Họ và tên</dt>
+                        <dd class="col-sm-8">@Model.User?.FullName</dd>
+
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">@Model.User?.Email</dd>
+
+                        <dt class="col-sm-4">Chuyên môn chính</dt>
+                        <dd class="col-sm-8">@Model.MainSubject</dd>
+
+                        <dt class="col-sm-4">Kinh nghiệm</dt>
+                        <dd class="col-sm-8">@Model.Experience</dd>
+
+                        <dt class="col-sm-4">Facebook</dt>
+                        <dd class="col-sm-8">@Model.Facebook</dd>
+
+                        <dt class="col-sm-4">LinkedIn</dt>
+                        <dd class="col-sm-8">@Model.LinkedIn</dd>
+
+                        <dt class="col-sm-4">Website</dt>
+                        <dd class="col-sm-8">@Model.Website</dd>
+
+                        <dt class="col-sm-4">Tiểu sử</dt>
+                        <dd class="col-sm-8">@Model.Bio</dd>
+                    </dl>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="InstructorId" />
+                        <input type="hidden" asp-for="UserId" />
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="submit" class="btn btn-danger btn-lg rounded-pill shadow-lg border-0">
+                                <i class="fas fa-trash-alt"></i> Xóa
+                            </button>
+                            <a asp-action="Index" class="btn btn-primary btn-lg rounded-pill shadow-lg border-0">
+                                <i class="fas fa-undo"></i> Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

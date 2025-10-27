@@ -1,114 +1,62 @@
 ﻿@model IEnumerable<course.Models.Course>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Quản lý khóa học";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Thumbnail)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Level)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsFeatured)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsNew)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HasCertificate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rating)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EnrollCount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Alias)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Instructor)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Thumbnail)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Level)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsFeatured)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsNew)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HasCertificate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EnrollCount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Alias)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.CategoryId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Instructor.InstructorId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.CourseId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CourseId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CourseId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="content" style="margin-left: 160px;">
+    <div class="container-fluid pt-4 px-4" style="width:105%;">
+        <div class="bg-light text-center rounded p-4">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h6 class="mb-0">Quản lý khóa học</h6>
+                <a asp-action="Create" class="btn btn-success">Thêm mới</a>
+            </div>
+            <div class="no-border-box table-responsive">
+                <table class="table text-start align-middle table-bordered table-hover mb-0">
+                    <thead>
+                        <tr class="text-dark">
+                            <th scope="col">STT</th>
+                            <th scope="col">Tiêu đề</th>
+                            <th scope="col">Giảng viên</th>
+                            <th scope="col">Giá</th>
+                            <th scope="col">Level</th>
+                            <th scope="col">Ngày tạo</th>
+                            <th scope="col">Nổi bật</th>
+                            <th scope="col">Mới</th>
+                            <th scope="col">Chứng chỉ</th>
+                            <th scope="col">Rating</th>
+                            <th scope="col">Học viên</th>
+                            <th scope="col" style="width: 110px;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@(i++)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                                <td>@item.Instructor?.User?.FullName</td>
+                                <td>@item.Price</td>
+                                <td>@Html.DisplayFor(modelItem => item.Level)</td>
+                                <td>@item.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                                <td>@(item.IsFeatured ? "✓" : "")</td>
+                                <td>@(item.IsNew ? "✓" : "")</td>
+                                <td>@(item.HasCertificate ? "✓" : "")</td>
+                                <td>@Html.DisplayFor(modelItem => item.Rating)</td>
+                                <td>@Html.DisplayFor(modelItem => item.EnrollCount)</td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@item.CourseId" class="btn btn-primary btn-sm">Sửa</a>                                  
+                                    <a asp-action="Delete" asp-route-id="@item.CourseId" class="btn btn-danger btn-sm">Xóa</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
