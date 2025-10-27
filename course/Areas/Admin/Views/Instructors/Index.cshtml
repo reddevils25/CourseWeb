@@ -1,0 +1,76 @@
+﻿@model IEnumerable<course.Models.Instructor>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content" style="margin-left: 160px;">
+    <div class="container-fluid pt-4 px-4" style="width: 104%;">
+        <div class="bg-light rounded p-4">
+            <h4 class="mb-4">Danh sách giảng viên</h4>
+            <a asp-action="Create" class="btn btn-primary mb-3">+ Thêm giảng viên</a>
+
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>STT</th>
+                        <th>Họ và tên</th>
+                        <th>Email</th>
+                        <th>Môn chính</th>
+                        <th>Kinh nghiệm</th>
+                        <th>Facebook</th>
+                        <th>LinkedIn</th>
+                        <th>Website</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        int index = 1;
+                        foreach (var instructor in Model)
+                        {
+                            <tr>
+                                <td class="text-center">@index</td>
+                                <td>@instructor.User?.FullName</td>
+                                <td>@instructor.User?.Email</td>
+                                <td>@instructor.MainSubject</td>
+                                <td>@instructor.Experience</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(instructor.Facebook))
+                                    {
+                                        <a href="@instructor.Facebook" target="_blank">Facebook</a>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(instructor.LinkedIn))
+                                    {
+                                        <a href="@instructor.LinkedIn" target="_blank">LinkedIn</a>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(instructor.Website))
+                                    {
+                                        <a href="@instructor.Website" target="_blank">Website</a>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <a asp-action="Edit" asp-route-id="@instructor.InstructorId" class="btn btn-sm btn-warning">Sửa</a>
+                                    <a asp-action="Delete" asp-route-id="@instructor.InstructorId" class="btn btn-sm btn-danger">Xóa</a>
+                                </td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center">Không có dữ liệu</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

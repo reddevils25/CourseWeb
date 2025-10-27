@@ -1,0 +1,73 @@
+﻿@model course.Models.Instructor
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content" style="margin-left: 68px;">
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4" style="width: 180%;">
+            <div class="col-sm-12 col-xl-8" style="padding-bottom: 100px;">
+                <div class="bg-light rounded h-100 p-4 shadow-sm">
+                    <h4 class="mb-4 text-primary">Thêm giảng viên mới</h4>
+
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Họ và tên</label>
+                            <input type="text" name="FullName" class="form-control" placeholder="Nhập họ tên giảng viên" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="Email" class="form-control" placeholder="Nhập email" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Mật khẩu</label>
+                            <input type="text" name="Password" class="form-control" placeholder="Nhập mật khẩu (lưu dạng gốc)" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Môn chính</label>
+                            <input type="text" name="MainSubject" class="form-control" placeholder="VD: Lập trình C#, Thiết kế Web..." />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Kinh nghiệm</label>
+                            <textarea name="Experience" class="form-control" rows="2" placeholder="Mô tả kinh nghiệm giảng dạy..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Tiểu sử</label>
+                            <textarea name="Bio" class="form-control" rows="3" placeholder="Giới thiệu ngắn về giảng viên..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Facebook</label>
+                            <input type="text" name="Facebook" class="form-control" placeholder="Nhập link Facebook (nếu có)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">LinkedIn</label>
+                            <input type="text" name="LinkedIn" class="form-control" placeholder="Nhập link LinkedIn (nếu có)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Website</label>
+                            <input type="text" name="Website" class="form-control" placeholder="Nhập website cá nhân (nếu có)" />
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success px-4">Thêm mới</button>
+                            <a asp-action="Index" class="btn btn-secondary px-4 ms-2">Quay lại</a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
