@@ -12,7 +12,7 @@ public partial class Student
 
     public string? StudentCode { get; set; }
 
-    public DateTime? DateOfBirth { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
 
     public string? Gender { get; set; }
 

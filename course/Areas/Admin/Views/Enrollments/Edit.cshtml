@@ -1,0 +1,66 @@
+﻿@model course.Models.Enrollment
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content">
+    <div class="container-fluid pt-4 px-4">
+        <div class="bg-light rounded p-4 shadow-sm">
+            <h4 class="mb-4 text-primary">Sửa thông tin học phí</h4>
+
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="EnrollmentId" />
+
+                <div class="mb-3">
+                    <label class="form-label">Sinh viên</label>
+                    <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Khóa học</label>
+                    <select asp-for="CourseId" class="form-control" asp-items="ViewBag.CourseId"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Số tiền (VNĐ)</label>
+                    <input asp-for="Amount" class="form-control" type="number" step="0.01" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Đã thanh toán?</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" asp-for="IsPaid" value="true" checked="@Model.IsPaid" /> Có
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" asp-for="IsPaid" value="false" checked="@(!Model.IsPaid)" /> Không
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Ngày thanh toán</label>
+                    <input asp-for="PaymentDate" type="date" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Tiến độ (%)</label>
+                    <input asp-for="Progress" type="number" step="0.01" min="0" max="100" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Có chứng chỉ?</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" asp-for="HasCertificate" value="true" checked="@(Model.HasCertificate ?? false)" /> Có
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" asp-for="HasCertificate" value="false" checked="@(!(Model.HasCertificate ?? false))" /> Không
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success">Cập nhật</button>
+            </form>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,24 @@
+﻿@model course.Models.Enrollment
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<<div class="content">
+    <div class="container-fluid pt-4 px-4">
+        <div class="bg-light rounded p-4 shadow-sm text-center">
+            <h4 class="text-danger mb-4">Bạn có chắc muốn xóa học phí này?</h4>
+
+            <p><strong>Sinh viên:</strong> @Model.User?.FullName</p>
+            <p><strong>Khóa học:</strong> @Model.Course?.Title</p>
+            <p><strong>Số tiền:</strong> @Model.Amount?.ToString("N0") VNĐ</p>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="EnrollmentId" />
+                <button type="submit" class="btn btn-danger px-4">Xóa</button>
+                <a asp-action="Index" class="btn btn-secondary px-4 ms-2">Hủy</a>
+            </form>
+        </div>
+    </div>
+</div>

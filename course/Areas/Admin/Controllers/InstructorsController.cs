@@ -67,7 +67,7 @@ namespace course.Areas.Admin.Controllers
                 return View();
             }
 
-            // 🔹 Kiểm tra trùng email
+         
             var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == Email);
             if (existingUser != null)
             {
@@ -75,12 +75,12 @@ namespace course.Areas.Admin.Controllers
                 return View();
             }
 
-            // 🔹 Tạo tài khoản người dùng (không mã hóa mật khẩu)
+            
             var user = new User
             {
                 FullName = FullName,
                 Email = Email,
-                PasswordHash = Password, // ❗ Lưu plain text (không mã hóa)
+                PasswordHash = Password, 
                 Role = "Instructor",
                 CreatedAt = DateTime.Now
             };
@@ -88,7 +88,7 @@ namespace course.Areas.Admin.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            // 🔹 Tạo giảng viên liên kết với User vừa tạo
+            
             var instructor = new Instructor
             {
                 UserId = user.UserId,
@@ -111,7 +111,7 @@ namespace course.Areas.Admin.Controllers
             if (id == null)
                 return NotFound();
 
-            // Include User để tránh null reference
+          
             var instructor = await _context.Instructors
                 .Include(i => i.User)
                 .FirstOrDefaultAsync(i => i.InstructorId == id);
@@ -119,7 +119,7 @@ namespace course.Areas.Admin.Controllers
             if (instructor == null)
                 return NotFound();
 
-            // Nếu bạn muốn dropdown chọn User (nếu có)
+           
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "FullName", instructor.UserId);
 
             return View(instructor);
@@ -144,7 +144,7 @@ namespace course.Areas.Admin.Controllers
                 if (existingInstructor == null)
                     return NotFound();
 
-                // Cập nhật Instructor
+               
                 existingInstructor.Bio = instructor.Bio;
                 existingInstructor.Experience = instructor.Experience;
                 existingInstructor.Facebook = instructor.Facebook;
@@ -152,7 +152,7 @@ namespace course.Areas.Admin.Controllers
                 existingInstructor.Website = instructor.Website;
                 existingInstructor.MainSubject = instructor.MainSubject;
 
-                // Cập nhật User từ DB, không bind trực tiếp từ form
+               
                 if (existingInstructor.User != null)
                 {
                     var userToUpdate = await _context.Users.FindAsync(existingInstructor.UserId);
@@ -182,7 +182,7 @@ namespace course.Areas.Admin.Controllers
             if (id == null)
                 return NotFound();
 
-            // Lấy Instructor kèm User
+           
             var instructor = await _context.Instructors
                 .Include(i => i.User)
                 .FirstOrDefaultAsync(i => i.InstructorId == id);
@@ -204,11 +204,11 @@ namespace course.Areas.Admin.Controllers
 
             if (instructor != null)
             {
-                // 1️⃣ Xóa Instructor trước
+               
                 _context.Instructors.Remove(instructor);
                 await _context.SaveChangesAsync();
 
-                // 2️⃣ Xóa User nếu muốn (chỉ khi chắc chắn User này không dùng bảng khác)
+                
                 if (instructor.User != null)
                 {
                     _context.Users.Remove(instructor.User);

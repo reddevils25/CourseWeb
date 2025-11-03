@@ -55,21 +55,26 @@ namespace course.Areas.Admin.Controllers
         // GET: Admin/Courses/Create
         public IActionResult Create()
         {
-            // Load danh sách Instructor để chọn
-            ViewData["InstructorId"] = new SelectList(_context.Instructors
-                .Include(i => i.User)
-                .ToList(), "InstructorId", "User.FullName");
+            ViewData["InstructorId"] = new SelectList(
+                _context.Instructors
+                    .Include(i => i.User)
+                    .Select(i => new {
+                        InstructorId = i.InstructorId,
+                        FullName = i.User.FullName
+                    })
+                    .ToList(),
+                "InstructorId",
+                "FullName"
+            );
 
-            // Load danh sách Category
             ViewData["CategoryId"] = new SelectList(_context.CourseCategories, "CategoryId", "Name");
 
-            // Dropdown Level tiếng Việt
             ViewData["LevelList"] = new List<SelectListItem>
-    {
-        new SelectListItem { Value = "Beginner", Text = "Cơ bản" },
-        new SelectListItem { Value = "Intermediate", Text = "Trung cấp" },
-        new SelectListItem { Value = "Advanced", Text = "Nâng cao" }
-    };
+{
+    new SelectListItem { Value = "Beginner", Text = "Cơ bản" },
+    new SelectListItem { Value = "Intermediate", Text = "Trung cấp" },
+    new SelectListItem { Value = "Advanced", Text = "Nâng cao" }
+};
 
             return View();
         }
@@ -79,17 +84,22 @@ namespace course.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("InstructorId,Title,Description,Price,Thumbnail,Level,IsFeatured,IsNew,HasCertificate,CategoryId,Alias,Rating")] Course course)
         {
-            if (!ModelState.IsValid)
+           
+            if (string.IsNullOrEmpty(course.Alias) && !string.IsNullOrEmpty(course.Title))
             {
-                var errors = string.Join(", ", ModelState.Values
-                                    .SelectMany(v => v.Errors)
-                                    .Select(e => e.ErrorMessage));
-                Console.WriteLine("ModelState errors: " + errors);
+                course.Alias = course.Title.ToLower().Replace(" ", "-");
             }
+
+           
+            ModelState.Remove("Instructor");
+            ModelState.Remove("Category");
+            ModelState.Remove("CourseReviews");
+            ModelState.Remove("Enrollments");
+            ModelState.Remove("Lessons");
+
             if (ModelState.IsValid)
             {
                 course.CreatedAt = DateTime.Now;
-                course.Rating = course.Rating ?? 0;
                 course.EnrollCount = 0;
 
                 _context.Add(course);
@@ -98,17 +108,28 @@ namespace course.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Nếu ModelState không hợp lệ, load lại dropdown
-            ViewData["InstructorId"] = new SelectList(_context.Instructors
-                .Include(i => i.User)
-                .ToList(), "InstructorId", "User.FullName", course.InstructorId);
+           
+            ViewData["InstructorId"] = new SelectList(
+                _context.Instructors
+                    .Include(i => i.User)
+                    .Select(i => new {
+                        InstructorId = i.InstructorId,
+                        FullName = i.User.FullName
+                    })
+                    .ToList(),
+                "InstructorId",
+                "FullName",
+                course.InstructorId
+            );
+
             ViewData["CategoryId"] = new SelectList(_context.CourseCategories, "CategoryId", "Name", course.CategoryId);
+
             ViewData["LevelList"] = new List<SelectListItem>
-    {
-        new SelectListItem { Value = "Beginner", Text = "Cơ bản" },
-        new SelectListItem { Value = "Intermediate", Text = "Trung cấp" },
-        new SelectListItem { Value = "Advanced", Text = "Nâng cao" }
-    };
+{
+    new SelectListItem { Value = "Beginner", Text = "Cơ bản" },
+    new SelectListItem { Value = "Intermediate", Text = "Trung cấp" },
+    new SelectListItem { Value = "Advanced", Text = "Nâng cao" }
+};
 
             return View(course);
         }
@@ -121,13 +142,21 @@ namespace course.Areas.Admin.Controllers
             var course = await _context.Courses.FindAsync(id);
             if (course == null) return NotFound();
 
-            // Dropdown giảng viên
-            ViewData["InstructorId"] = new SelectList(_context.Instructors.Include(i => i.User).ToList(), "InstructorId", "User.FullName", course.InstructorId);
+            ViewData["InstructorId"] = new SelectList(
+                _context.Instructors
+                    .Include(i => i.User)
+                    .Select(i => new {
+                        InstructorId = i.InstructorId,
+                        FullName = i.User.FullName
+                    })
+                    .ToList(),
+                "InstructorId",
+                "FullName",
+                course.InstructorId
+            );
 
-            // Dropdown danh mục
             ViewData["CategoryId"] = new SelectList(_context.CourseCategories.ToList(), "CategoryId", "Name", course.CategoryId);
 
-            // Dropdown Level tiếng Việt
             ViewData["LevelList"] = new List<SelectListItem>
     {
         new SelectListItem { Value = "Beginner", Text = "Cơ bản" },
@@ -148,10 +177,29 @@ namespace course.Areas.Admin.Controllers
         {
             if (id != course.CourseId) return NotFound();
 
+            ModelState.Remove("Instructor");
+            ModelState.Remove("Category");
+            ModelState.Remove("CourseReviews");
+            ModelState.Remove("Enrollments");
+            ModelState.Remove("Lessons");
+
             if (!ModelState.IsValid)
             {
-                ViewData["InstructorId"] = new SelectList(_context.Instructors.Include(i => i.User).ToList(), "InstructorId", "User.FullName", course.InstructorId);
+                ViewData["InstructorId"] = new SelectList(
+                    _context.Instructors
+                        .Include(i => i.User)
+                        .Select(i => new {
+                            InstructorId = i.InstructorId,
+                            FullName = i.User.FullName
+                        })
+                        .ToList(),
+                    "InstructorId",
+                    "FullName",
+                    course.InstructorId
+                );
+
                 ViewData["CategoryId"] = new SelectList(_context.CourseCategories.ToList(), "CategoryId", "Name", course.CategoryId);
+
                 ViewData["LevelList"] = new List<SelectListItem>
         {
             new SelectListItem { Value = "Beginner", Text = "Cơ bản" },
@@ -163,6 +211,14 @@ namespace course.Areas.Admin.Controllers
 
             try
             {
+                // Lấy course cũ để giữ lại CreatedAt và EnrollCount
+                var existingCourse = await _context.Courses.AsNoTracking().FirstOrDefaultAsync(c => c.CourseId == id);
+                if (existingCourse != null)
+                {
+                    course.CreatedAt = existingCourse.CreatedAt;
+                    course.EnrollCount = existingCourse.EnrollCount;
+                }
+
                 _context.Update(course);
                 await _context.SaveChangesAsync();
             }
@@ -176,6 +232,7 @@ namespace course.Areas.Admin.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
         // GET: Admin/Courses/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -183,7 +240,7 @@ namespace course.Areas.Admin.Controllers
 
             var course = await _context.Courses
                 .Include(c => c.Instructor)
-                    .ThenInclude(i => i.User)
+                .ThenInclude(i => i.User)
                 .Include(c => c.Category)
                 .FirstOrDefaultAsync(c => c.CourseId == id);
 

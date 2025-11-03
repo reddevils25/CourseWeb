@@ -45,7 +45,7 @@ public partial class CourseContext : DbContext
 
     public virtual DbSet<WebsiteReview> WebsiteReviews { get; set; }
 
-
+ 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<About>(entity =>
@@ -175,10 +175,12 @@ public partial class CourseContext : DbContext
         {
             entity.HasKey(e => e.EnrollmentId).HasName("PK__Enrollme__7F68771B166E4690");
 
+            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.EnrollDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.HasCertificate).HasDefaultValue(false);
+            entity.Property(e => e.PaymentDate).HasColumnType("datetime");
             entity.Property(e => e.Progress).HasDefaultValue(0.0);
 
             entity.HasOne(d => d.Course).WithMany(p => p.Enrollments)
