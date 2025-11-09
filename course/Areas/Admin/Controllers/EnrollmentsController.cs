@@ -30,52 +30,7 @@ namespace course.Areas.Admin.Controllers
             return View(enrollments);
         }
 
-        // GET: Admin/Enrollments/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var enrollment = await _context.Enrollments
-                .Include(e => e.Course)
-                .Include(e => e.User)
-                .FirstOrDefaultAsync(m => m.EnrollmentId == id);
-            if (enrollment == null)
-            {
-                return NotFound();
-            }
-
-            return View(enrollment);
-        }
-
-        // GET: Admin/Enrollments/Create
-        public IActionResult Create()
-        {
-            ViewData["CourseId"] = new SelectList(_context.Courses, "CourseId", "CourseId");
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId");
-            return View();
-        }
-
-        // POST: Admin/Enrollments/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EnrollmentId,UserId,CourseId,EnrollDate,Progress,HasCertificate,Amount,IsPaid,PaymentDate")] Enrollment enrollment)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(enrollment);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "CourseId", "CourseId", enrollment.CourseId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", enrollment.UserId);
-            return View(enrollment);
-        }
-
+ 
         // GET: Admin/Enrollments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -90,9 +45,6 @@ namespace course.Areas.Admin.Controllers
             return View(enrollment);
         }
 
-        // POST: Admin/Enrollments/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("EnrollmentId,UserId,CourseId,EnrollDate,Progress,HasCertificate,Amount,IsPaid,PaymentDate")] Enrollment enrollment)

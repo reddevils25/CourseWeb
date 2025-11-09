@@ -23,28 +23,10 @@ namespace course.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             var instructors = await _context.Instructors
-                .Include(i => i.User) // load thêm dữ liệu User
+                .Include(i => i.User) 
                 .ToListAsync();
 
             return View(instructors);
-        }
-        // GET: Admin/Instructors/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var instructor = await _context.Instructors
-                .Include(i => i.User)
-                .FirstOrDefaultAsync(m => m.InstructorId == id);
-            if (instructor == null)
-            {
-                return NotFound();
-            }
-
-            return View(instructor);
         }
 
         // GET: Admin/Instructors/Create
@@ -54,9 +36,7 @@ namespace course.Areas.Admin.Controllers
             return View();
         }
 
-        // POST: Admin/Instructors/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string FullName, string Email, string Password, string MainSubject, string Experience, string Bio, string Facebook, string LinkedIn, string Website)
@@ -125,9 +105,6 @@ namespace course.Areas.Admin.Controllers
             return View(instructor);
         }
 
-        // POST: Admin/Instructors/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Instructor instructor)
