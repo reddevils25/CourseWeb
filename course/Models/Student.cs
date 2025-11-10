@@ -22,6 +22,8 @@ public partial class Student
 
     public DateTime? EnrollmentDate { get; set; }
 
+    public virtual ICollection<Submission> Submissions { get; set; } = new List<Submission>();
+
     [ValidateNever]
     public virtual User User { get; set; } = null!;
 }

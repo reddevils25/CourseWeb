@@ -17,5 +17,7 @@ public partial class Lesson
 
     public string? Content { get; set; }
 
+    public virtual ICollection<Assignment> Assignments { get; set; } = new List<Assignment>();
+
     public virtual Course Course { get; set; } = null!;
 }

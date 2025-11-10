@@ -1,0 +1,71 @@
+﻿@model course.Models.Assignment
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content" style="margin-left:150px;">
+    <div class="container-fluid pt-4 px-4" style="width:105%;">
+        <div class="bg-light rounded p-4">
+            <h4 class="mb-4 text-primary">Sửa bài tập</h4>
+
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="AssignmentId" />
+
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="LessonId" class="form-label">Bài học</label>
+                        <select asp-for="LessonId" class="form-select" asp-items="ViewBag.Lessons">
+                            <option value="">-- Chọn bài học --</option>
+                        </select>
+                        <span asp-validation-for="LessonId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Title" class="form-label">Tiêu đề</label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label asp-for="Description" class="form-label">Mô tả</label>
+                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Question" class="form-label">Câu hỏi</label>
+                        <textarea asp-for="Question" class="form-control" rows="2"></textarea>
+                        <span asp-validation-for="Question" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="CorrectAnswer" class="form-label">Đáp án đúng</label>
+                        <input asp-for="CorrectAnswer" class="form-control" />
+                        <span asp-validation-for="CorrectAnswer" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Deadline" class="form-label">Hạn nộp</label>
+                        <input asp-for="Deadline" type="datetime-local" class="form-control" />
+                        <span asp-validation-for="Deadline" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="FilePath" class="form-label">File đính kèm (nếu có)</label>
+                        <input asp-for="FilePath" class="form-control" />
+                        <span asp-validation-for="FilePath" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

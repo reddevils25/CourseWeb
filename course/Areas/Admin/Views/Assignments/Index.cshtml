@@ -1,0 +1,49 @@
+﻿@model IEnumerable<course.Models.Assignment>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content" style="margin-left: 150px;">
+    <div class="container-fluid pt-4 px-4" style="width:105%; padding-bottom: 100px;">
+        <div class="bg-light text-center rounded p-4">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h6 class="mb-0">Quản lý bài tập</h6>
+                <a asp-action="Create" class="btn btn-success">Thêm mới</a>
+            </div>
+            <div class="no-border-box table-responsive">
+                <table class="table text-start align-middle table-bordered table-hover mb-0">
+                    <thead>
+                        <tr class="text-dark">
+                            <th scope="col">STT</th>
+                            <th>Tên bài tập</th>
+                            <th>Thuộc bài học</th>
+                            <th>Hạn nộp</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                        }
+                  
+                        @foreach (var a in Model)
+                        {
+                        <tr> 
+                            <td>@(i++)</td>
+                            <td>@a.Title</td>
+                            <td>@a.Lesson?.Title</td>
+                            <td>@a.Deadline?.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@a.AssignmentId" class="btn btn-sm btn-warning">Sửa</a>
+                                <a asp-action="Delete" asp-route-id="@a.AssignmentId" class="btn btn-sm btn-danger">Xóa</a>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

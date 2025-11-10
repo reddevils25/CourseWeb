@@ -21,10 +21,12 @@ namespace course.Controllers
 
 
             var course = await _context.Courses
-     .Include(c => c.Category)
-     .Include(c => c.Instructor)
-         .ThenInclude(i => i.User)
-     .FirstOrDefaultAsync(m => m.CourseId == id);
+      .Include(c => c.Category)
+      .Include(c => c.Instructor)
+          .ThenInclude(i => i.User)
+      .Include(c => c.Lessons)             
+          .ThenInclude(l => l.Assignments)
+      .FirstOrDefaultAsync(m => m.CourseId == id);
 
             if (course == null)
             {

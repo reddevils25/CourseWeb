@@ -1,0 +1,46 @@
+﻿@model course.Models.Assignment
+
+@{
+    ViewData["Title"] = "Làm bài tập";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">@Model.Title</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Mô tả:</strong> @Model.Description</p>
+                    <p><strong>Câu hỏi:</strong> @Model.Question</p>
+                    @if (!string.IsNullOrEmpty(Model.FilePath))
+                    {
+                        <p>
+                            <strong>Tệp đính kèm:</strong>
+                            <a href="@Model.FilePath" target="_blank" class="btn btn-sm btn-outline-secondary">Tải về</a>
+                        </p>
+                    }
+                    <p><strong>Hạn nộp:</strong> @Model.Deadline?.ToString("dd/MM/yyyy HH:mm")</p>
+
+                    <form asp-action="Submit" method="post" class="mt-4">
+                        <input type="hidden" name="assignmentId" value="@Model.AssignmentId" />
+                        <input type="hidden" name="studentId" value="1" /> <!-- tạm thời -->
+
+                        <div class="mb-3">
+                            <label for="answerText" class="form-label">Nội dung trả lời</label>
+                            <textarea id="answerText" name="answerText" class="form-control" rows="6" placeholder="Nhập câu trả lời của bạn..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-send"></i> Nộp bài
+                        </button>
+                        <a asp-action="Index" asp-route-lessonId="@Model.LessonId" class="btn btn-secondary ms-2">
+                            <i class="bi bi-arrow-left"></i> Quay lại
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -17,6 +17,8 @@ public partial class CourseContext : DbContext
 
     public virtual DbSet<About> Abouts { get; set; }
 
+    public virtual DbSet<Assignment> Assignments { get; set; }
+
     public virtual DbSet<Blog> Blogs { get; set; }
 
     public virtual DbSet<BlogComment> BlogComments { get; set; }
@@ -41,11 +43,12 @@ public partial class CourseContext : DbContext
 
     public virtual DbSet<Student> Students { get; set; }
 
+    public virtual DbSet<Submission> Submissions { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<WebsiteReview> WebsiteReviews { get; set; }
 
- 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<About>(entity =>
@@ -56,6 +59,20 @@ public partial class CourseContext : DbContext
 
             entity.Property(e => e.Image).HasMaxLength(255);
             entity.Property(e => e.Title).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<Assignment>(entity =>
+        {
+            entity.HasKey(e => e.AssignmentId).HasName("PK__Assignme__32499E77E1FA4B50");
+
+            entity.Property(e => e.CorrectAnswer).HasMaxLength(255);
+            entity.Property(e => e.Deadline).HasColumnType("datetime");
+            entity.Property(e => e.FilePath).HasMaxLength(500);
+            entity.Property(e => e.Title).HasMaxLength(255);
+
+            entity.HasOne(d => d.Lesson).WithMany(p => p.Assignments)
+                .HasForeignKey(d => d.LessonId)
+                .HasConstraintName("FK_Assignments_Lessons");
         });
 
         modelBuilder.Entity<Blog>(entity =>
@@ -267,6 +284,24 @@ public partial class CourseContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Students__UserId__03F0984C");
+        });
+
+        modelBuilder.Entity<Submission>(entity =>
+        {
+            entity.HasKey(e => e.SubmissionId).HasName("PK__Submissi__449EE1257D9835A9");
+
+            entity.Property(e => e.FilePath).HasMaxLength(500);
+            entity.Property(e => e.SubmittedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.Assignment).WithMany(p => p.Submissions)
+                .HasForeignKey(d => d.AssignmentId)
+                .HasConstraintName("FK_Submissions_Assignments");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.Submissions)
+                .HasForeignKey(d => d.StudentId)
+                .HasConstraintName("FK_Submissions_Students");
         });
 
         modelBuilder.Entity<User>(entity =>

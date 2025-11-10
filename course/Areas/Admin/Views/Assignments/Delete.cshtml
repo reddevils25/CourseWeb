@@ -1,0 +1,36 @@
+﻿@model course.Models.Assignment
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="content" style="margin-left:150px;">
+    <div class="container-fluid pt-4 px-4" style="width:105%;">
+        <div class="bg-light rounded p-4">
+            <h4 class="mb-4 text-danger">Xóa bài tập</h4>
+
+            <div class="alert alert-warning">
+                Bạn có chắc chắn muốn xóa bài tập này?
+            </div>
+
+            <dl class="row">
+                <dt class="col-sm-3">Tiêu đề</dt>
+                <dd class="col-sm-9">@Model.Title</dd>
+
+                <dt class="col-sm-3">Bài học</dt>
+                <dd class="col-sm-9">@Model.Lesson?.Title</dd>
+
+                <dt class="col-sm-3">Mô tả</dt>
+                <dd class="col-sm-9">@Model.Description</dd>
+            </dl>
+
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="AssignmentId" />
+                <button type="submit" class="btn btn-danger">Xóa</button>
+                <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,48 @@
+﻿@model IEnumerable<course.Models.Assignment>
+
+@{
+    ViewData["Title"] = "Danh sách bài tập";
+    int studentId = 1; 
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Danh sách bài tập</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Chưa có bài tập nào cho bài học này.</div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            @foreach (var ass in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@ass.Title</h5>
+                            <p class="card-text">@ass.Description</p>
+                            <p class="text-muted mb-1">Hạn nộp: @ass.Deadline?.ToString("dd/MM/yyyy")</p>
+
+                            @{
+                              
+                                var submitted = ass.Submissions?.Any(s => s.StudentId == studentId) ?? false;
+                            }
+
+                            @if (submitted)
+                            {
+                                <span class="badge bg-success">Đã nộp</span>
+                            }
+                            else
+                            {
+                                <a asp-action="Submit" asp-route-assignmentId="@ass.AssignmentId" class="btn btn-primary">
+                                    Làm bài
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
