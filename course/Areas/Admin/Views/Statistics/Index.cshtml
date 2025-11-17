@@ -283,6 +283,32 @@
                 </div>
             </div>
         </div>
+        <div class="chart-container mb-4">
+            <h5 class="mb-3">🎯 Thống kê theo Cấp độ</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Cấp độ</th>
+                            <th>Số khóa học</th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            for (int i = 0; i < ViewBag.LevelLabels.Count; i++)
+                            {
+                                <tr>
+                                    <td>@(i + 1)</td>
+                                    <td>@(ViewBag.LevelLabels[i] == "Beginner" ? "Cơ bản" : ViewBag.LevelLabels[i] == "Intermediate" ? "Trung cấp" : "Nâng cao")</td>
+                                    <td>@ViewBag.LevelCounts[i]</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
         <!-- ========== TOP INSTRUCTORS ========== -->
         <div class="chart-container mb-4">
@@ -568,21 +594,26 @@
     });
 
     // ========== CATEGORY CHART ==========
-    new Chart(document.getElementById('categoryChart'), {
+        new Chart(document.getElementById('categoryChart'), {
         type: 'bar',
         data: {
             labels: @Html.Raw(Json.Serialize(ViewBag.CategoryLabels)),
-            datasets: [{
-                label: 'Số lượt đăng ký',
-                data: @Html.Raw(Json.Serialize(ViewBag.CategoryEnrollments)),
-                backgroundColor: 'rgba(75, 192, 192, 0.8)'
-            }]
+            datasets: [
+                { label: 'Số khóa học', data: @Html.Raw(Json.Serialize(ViewBag.CategoryCounts)), backgroundColor: 'rgba(75, 192, 192, 0.8)' },
+                { label: 'Số đăng ký', data: @Html.Raw(Json.Serialize(ViewBag.CategoryEnrollments)), backgroundColor: 'rgba(255, 159, 64, 0.8)' },
+                { label: 'Doanh thu', data: @Html.Raw(Json.Serialize(ViewBag.CategoryRevenue)), backgroundColor: 'rgba(54, 162, 235, 0.8)' },
+                { label: 'Điểm TB', data: @Html.Raw(Json.Serialize(ViewBag.CategoryAvgRating)), backgroundColor: 'rgba(153, 102, 255, 0.8)' }
+            ]
         },
         options: {
             responsive: true,
-            indexAxis: 'y'
+            indexAxis: 'y',
+            scales: {
+                x: { beginAtZero: true }
+            }
         }
     });
+
 
     // ========== PRICE RANGE CHART ==========
     new Chart(document.getElementById('priceRangeChart'), {

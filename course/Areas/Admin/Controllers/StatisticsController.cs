@@ -197,22 +197,25 @@ namespace course.Areas.Admin.Controllers
                 .Select(cat => new
                 {
                     Name = cat.Name,
-                    Count = coursesQuery.Count(c => c.CategoryId == cat.CategoryId),
-                    Enrollments = enrollmentsQuery.Count(e => e.Course.CategoryId == cat.CategoryId),
+                    Count = coursesQuery.Count(c => c.CategoryId == cat.CategoryId), // Số khóa học
+                    Enrollments = enrollmentsQuery.Count(e => e.Course.CategoryId == cat.CategoryId), // Số đăng ký
                     Revenue = enrollmentsQuery
                         .Where(e => e.Course.CategoryId == cat.CategoryId && e.IsPaid)
-                        .Sum(e => e.Amount),
+                        .Sum(e => e.Amount ?? 0), // Doanh thu
                     AvgRating = coursesQuery
                         .Where(c => c.CategoryId == cat.CategoryId && c.Rating > 0)
-                        .Average(c => (double?)c.Rating) ?? 0
+                        .Average(c => (double?)c.Rating) ?? 0 // Điểm trung bình
                 })
                 .OrderByDescending(x => x.Enrollments)
                 .ToList();
 
+            // Gán dữ liệu cho ViewBag
             ViewBag.CategoryLabels = categoryStats.Select(x => x.Name).ToList();
             ViewBag.CategoryCounts = categoryStats.Select(x => x.Count).ToList();
             ViewBag.CategoryEnrollments = categoryStats.Select(x => x.Enrollments).ToList();
             ViewBag.CategoryRevenue = categoryStats.Select(x => x.Revenue).ToList();
+            ViewBag.CategoryAvgRating = categoryStats.Select(x => x.AvgRating).ToList();
+
 
             // ========== LEVEL STATISTICS ==========
             var levelStats = coursesQuery
