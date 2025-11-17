@@ -155,7 +155,7 @@ namespace course.Areas.Admin.Controllers
                     e.EnrollDate.Hour == hour)
             ).ToList();
 
-            // ========== MONTHLY STATISTICS (Last 12 months) ==========
+            // ==========Thống kê hàng tháng ==========
             var last12Months = Enumerable.Range(0, 12)
                 .Select(i => DateTime.Now.AddMonths(-11 + i))
                 .ToList();
