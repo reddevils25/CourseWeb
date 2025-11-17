@@ -5,7 +5,7 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-<div class="content" style="margin-left:122px;">
+<div class="content" style="margin-left:150px;">
     <div class="container-fluid pt-4 px-4">
         <div class="bg-light rounded p-4 shadow-sm">
             <h4 class="mb-4 text-primary">Sửa thông tin học phí</h4>
@@ -51,10 +51,10 @@
                 <div class="mb-3">
                     <label class="form-label">Có chứng chỉ?</label>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" asp-for="HasCertificate" value="true" checked="@(Model.HasCertificate ?? false)" /> Có
+                        <input class="form-check-input" type="radio" asp-for="HasCertificate" value="true" checked="@(Model.HasCertificate)" /> Có
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" asp-for="HasCertificate" value="false" checked="@(!(Model.HasCertificate ?? false))" /> Không
+                        <input class="form-check-input" type="radio" asp-for="HasCertificate" value="false" checked="@(!(Model.HasCertificate))" /> Không
                     </div>
                 </div>
 
