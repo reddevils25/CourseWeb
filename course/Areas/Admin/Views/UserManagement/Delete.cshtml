@@ -1,0 +1,46 @@
+﻿@model course.Models.User
+
+@{
+    ViewData["Title"] = "Xóa người dùng";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content" style="margin-left:47px;width: 92%;">
+    <div class="container-fluid pt-4 px-4" style="max-width:600px; padding-bottom:100px;">
+
+        <h2 class="text-danger mb-4">🗑️ Xác nhận xóa người dùng</h2>
+
+        <div class="bg-white p-4 rounded shadow">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Cảnh báo:</strong> Hành động này không thể hoàn tác!
+            </div>
+
+            <div class="mb-3">
+                <p><strong>Họ tên:</strong> @Model.FullName</p>
+                <p><strong>Email:</strong> @Model.Email</p>
+                <p>
+                    <strong>Vai trò:</strong>
+                    <span class="badge bg-primary">
+                        @(Model.Role == "Admin" ? "Quản trị" :
+                            Model.Role == "Instructor" ? "Giảng viên" : "Học viên")
+                    </span>
+                </p>
+                <p><strong>Ngày tạo:</strong> @Model.CreatedAt.ToString("dd/MM/yyyy")</p>
+            </div>
+
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="UserId">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Xác nhận xóa
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Hủy
+                    </a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>

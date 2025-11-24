@@ -1,0 +1,70 @@
+﻿@model course.Models.User
+
+@{
+    ViewData["Title"] = "Chỉnh sửa người dùng";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content" style="margin-left:47px;width: 92%;">
+    <div class="container-fluid pt-4 px-4" style="max-width:800px; padding-bottom:100px;">
+
+        <h2 class="text-primary mb-4">✏️ Chỉnh sửa người dùng</h2>
+
+        <div class="bg-white p-4 rounded shadow">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="UserId">
+                <input type="hidden" asp-for="CreatedAt">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Họ và tên</strong></label>
+                    <input asp-for="FullName" class="form-control" required>
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Email</strong></label>
+                    <input asp-for="Email" type="email" class="form-control" required>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Mật khẩu mới (để trống nếu không đổi)</strong></label>
+                    <input type="password" name="newPassword" class="form-control">
+                    <small class="text-muted">Chỉ nhập nếu muốn thay đổi mật khẩu</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Vai trò</strong></label>
+                    <select asp-for="Role" class="form-select" required>
+                        @foreach (var role in ViewBag.Roles)
+                        {
+                            <option value="@role">
+                                @(role == "Admin" ? "Quản trị viên" :
+                                    role == "Instructor" ? "Giảng viên" : "Học viên")
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Avatar URL</strong></label>
+                    <input asp-for="Avatar" class="form-control">
+                    <div class="mt-2">
+                        <img src="@Model.Avatar" alt="Preview" style="width:100px; height:100px; border-radius:50%; object-fit:cover;">
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Cập nhật
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Hủy
+                    </a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>

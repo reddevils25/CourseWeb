@@ -26,7 +26,7 @@
 
     .filter-card {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 20px;
+        padding: 25px;
         border-radius: 10px;
         margin-bottom: 20px;
     }
@@ -45,9 +45,22 @@
         padding: 8px 12px;
         font-size: 0.9rem;
     }
+
+    .filter-section {
+        background: rgba(255,255,255,0.1);
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+
+        .filter-section h6 {
+            color: white;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
 </style>
 
-<div class="content" style="margin-left:150px;">
+<div class="content" style="margin-left:47px;width: 92%;">
     <div class="container-fluid pt-4 px-4" style="width:105%; padding-bottom:100px;">
 
         <!-- TITLE -->
@@ -56,252 +69,315 @@
             <small class="text-muted">Cập nhật: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</small>
         </div>
 
-        <!-- ========== Phần lọc ========== -->
-        <div class="filter-card">
-            <form method="get" class="row g-3 text-white">
-                <div class="col-md-3">
-                    <label class="form-label"><strong>📅 Khoảng thời gian</strong></label>
-                    <select name="timeRange" class="form-select" onchange="toggleCustomDate(this.value)">
-                        <option value="all" selected="@(ViewBag.TimeRange == "all" ? "selected" : null)">Tất cả</option>
-                        <option value="today" selected="@(ViewBag.TimeRange == "today" ? "selected" : null)">Hôm nay</option>
-                        <option value="week" selected="@(ViewBag.TimeRange == "week" ? "selected" : null)">7 ngày qua</option>
-                        <option value="month" selected="@(ViewBag.TimeRange == "month" ? "selected" : null)">30 ngày qua</option>
-                        <option value="year" selected="@(ViewBag.TimeRange == "year" ? "selected" : null)">Năm qua</option>
-                        <option value="custom" selected="@(ViewBag.TimeRange == "custom" ? "selected" : null)">Tùy chỉnh</option>
+        <!-- ========== BỘ LỌC MỞ RỘNG ========== -->
+        @* <div class="filter-card"> *@
+        @*     <form method="get" class="text-white"> *@
 
-                    </select>
-                </div>
+        @*         <!-- Bộ lọc Thời gian --> *@
+        @*         <div class="filter-section"> *@
+        @*             <h6>⏰ Khoảng Thời gian</h6> *@
+        @*             <div class="row g-3"> *@
+        @*                 <div class="col-md-3"> *@
+        @*                     <label class="form-label">Chọn khoảng</label> *@
+        @*                     <select name="timeRange" class="form-select" onchange="toggleCustomDate(this.value)"> *@
+        @*                         <option value="all" selected="@(ViewBag.TimeRange == "all" ? "selected" : null)">Tất cả</option> *@
+        @*                         <option value="today" selected="@(ViewBag.TimeRange == "today" ? "selected" : null)">Hôm nay</option> *@
+        @*                         <option value="week" selected="@(ViewBag.TimeRange == "week" ? "selected" : null)">7 ngày qua</option> *@
+        @*                         <option value="month" selected="@(ViewBag.TimeRange == "month" ? "selected" : null)">30 ngày qua</option> *@
+        @*                         <option value="year" selected="@(ViewBag.TimeRange == "year" ? "selected" : null)">Năm qua</option> *@
+        @*                         <option value="custom" selected="@(ViewBag.TimeRange == "custom" ? "selected" : null)">Tùy chỉnh</option> *@
+        @*                     </select> *@
+        @*                 </div> *@
+        @*                 <div class="col-md-3" id="startDateDiv" style="display: @(ViewBag.TimeRange == "custom" ? "block" : "none")"> *@
+        @*                     <label class="form-label">Từ ngày</label> *@
+        @*                     <input type="date" name="startDate" class="form-control" value="@ViewBag.StartDate"> *@
+        @*                 </div> *@
+        @*                 <div class="col-md-3" id="endDateDiv" style="display: @(ViewBag.TimeRange == "custom" ? "block" : "none")"> *@
+        @*                     <label class="form-label">Đến ngày</label> *@
+        @*                     <input type="date" name="endDate" class="form-control" value="@ViewBag.EndDate"> *@
+        @*                 </div> *@
+        @*             </div> *@
+        @*         </div> *@
 
-                <div class="col-md-2" id="startDateDiv" style="display: @(ViewBag.TimeRange == "custom" ? "block" : "none")">
-                    <label class="form-label"><strong>Từ ngày</strong></label>
-                    <input type="date" name="startDate" class="form-control" value="@ViewBag.StartDate">
-                </div>
+        @*         <!-- Bộ lọc Khóa học --> *@
+        @*         <div class="filter-section"> *@
+        @*             <h6>📚 Lọc theo Khóa học</h6> *@
+        @*             <div class="row g-3"> *@
+        @*                 <div class="col-md-3"> *@
+        @*                     <label class="form-label">Danh mục</label> *@
+        @*                     <select name="categoryId" class="form-select"> *@
+        @*                         <option value="">Tất cả danh mục</option> *@
+        @*                         @foreach (var cat in ViewBag.Categories) *@
+        @*                         { *@
+        @*                             <option value="@cat.CategoryId" selected="@(ViewBag.SelectedCategory == cat.CategoryId ? "selected" : null)"> *@
+        @*                                 @cat.Name *@
+        @*                             </option> *@
+        @*                         } *@
+        @*                     </select> *@
+        @*                 </div> *@
+        @*                 <div class="col-md-3"> *@
+        @*                     <label class="form-label">Cấp độ</label> *@
+        @*                     <select name="level" class="form-select"> *@
+        @*                         <option value="">Tất cả cấp độ</option> *@
+        @*                         @foreach (var lv in ViewBag.Levels) *@
+        @*                         { *@
+        @*                             <option value="@lv" selected="@(ViewBag.SelectedLevel == lv ? "selected" : null)"> *@
+        @*                                 @(lv == "Beginner" ? "Cơ bản" : lv == "Intermediate" ? "Trung cấp" : "Nâng cao") *@
+        @*                             </option> *@
+        @*                         } *@
+        @*                     </select> *@
+        @*                 </div> *@
+        @*                 <div class="col-md-3"> *@
+        @*                     <label class="form-label">Khóa học cụ thể</label> *@
+        @*                     <select name="courseId" class="form-select"> *@
+        @*                         <option value="">Tất cả khóa học</option> *@
+        @*                         @foreach (var course in ViewBag.Courses) *@
+        @*                         { *@
+        @*                             <option value="@course.CourseId" selected="@(ViewBag.SelectedCourse == course.CourseId ? "selected" : null)"> *@
+        @*                                 @course.Title - (@course.CategoryName) *@
+        @*                             </option> *@
+        @*                         } *@
+        @*                     </select> *@
+        @*                 </div> *@
+        @*                 <div class="col-md-3"> *@
+        @*                     <label class="form-label">Giảng viên</label> *@
+        @*                     <select name="instructorId" class="form-select"> *@
+        @*                         <option value="">Tất cả giảng viên</option> *@
+        @*                         @foreach (var instructor in ViewBag.Instructors) *@
+        @*                         { *@
+        @*                             <option value="@instructor.InstructorId" selected="@(ViewBag.SelectedInstructor == instructor.InstructorId ? "selected" : null)"> *@
+        @*                                 @instructor.FullName *@
+        @*                             </option> *@
+        @*                         } *@
+        @*                     </select> *@
+        @*                 </div> *@
+        @*             </div> *@
+        @*         </div> *@
 
-                <div class="col-md-2" id="endDateDiv" style="display: @(ViewBag.TimeRange == "custom" ? "block" : "none")">
-                    <label class="form-label"><strong>Đến ngày</strong></label>
-                    <input type="date" name="endDate" class="form-control" value="@ViewBag.EndDate">
-                </div>
+        @*         <!-- Nút Lọc --> *@
+        @*         <div class="text-center"> *@
+        @*             <button type="submit" class="btn btn-light btn-lg px-5"> *@
+        @*                 <i class="fas fa-filter me-2"></i> Áp dụng Bộ lọc *@
+        @*             </button> *@
+        @*             <a href="@Url.Action("Index")" class="btn btn-outline-light btn-lg px-5 ms-2"> *@
+        @*                 <i class="fas fa-redo me-2"></i> Đặt lại *@
+        @*             </a> *@
+        @*         </div> *@
+        @*     </form> *@
+        @* </div> *@
 
-                <div class="col-md-2">
-                    <label class="form-label"><strong>📚 Danh mục</strong></label>
-                    <select name="categoryId" class="form-select">
-                        <option value="">Tất cả</option>
-                        @foreach (var cat in ViewBag.Categories)
-                        {
-                            <option value="@cat.CategoryId" selected="@(ViewBag.SelectedCategory == cat.CategoryId ? "selected" : null)">
-                                @cat.Name
-                            </option>
-
-                        }
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <label class="form-label"><strong>🎯 Cấp độ</strong></label>
-                    <select name="level" class="form-select">
-                        <option value="">Tất cả</option>
-                        @foreach (var lv in ViewBag.Levels)
-                        {
-                            <option value="@lv" selected="@(ViewBag.SelectedLevel == lv ? "selected" : null)">
-                                @(lv == "Beginner" ? "Cơ bản" : lv == "Intermediate" ? "Trung cấp" : "Nâng cao")
-                            </option>
-
-                        }
-                    </select>
-                </div>
-
-                <div class="col-md-1">
-                    <label class="form-label">&nbsp;</label>
-                    <button type="submit" class="btn btn-light w-100">
-                        <i class="fas fa-filter"></i> Lọc
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- ========== KPI CARDS WITH GROWTH ========== -->
+        <!-- ========== KPI CARDS CHÍNH ========== -->
         <div class="row g-3 mb-4">
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-2 col-md-4">
                 <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h4 class="mb-0">@ViewBag.TotalCourses</h4>
-                            <small>Tổng khóa học</small>
+                            <small>Khóa học</small>
                         </div>
-                        <i class="fas fa-book fa-3x opacity-50"></i>
+                        <i class="fas fa-book fa-2x opacity-50"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-2 col-md-4">
                 <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h4 class="mb-0">@ViewBag.TotalStudents</h4>
-                            <small>Học viên</small>
+                            <h4 class="mb-0">@ViewBag.TotalLessons</h4>
+                            <small>Bài học</small>
                         </div>
-                        <i class="fas fa-users fa-3x opacity-50"></i>
+                        <i class="fas fa-chalkboard-teacher fa-2x opacity-50"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-2 col-md-4">
                 <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h4 class="mb-0">@ViewBag.TotalEnrollments</h4>
-                            <small>Lượt đăng ký</small>
-                            @if (ViewBag.EnrollmentGrowth != 0)
-                            {
-                                <div class="mt-1">
-                                    <span class="badge @(ViewBag.EnrollmentGrowth > 0 ? "bg-success" : "bg-danger")">
-                                        @(ViewBag.EnrollmentGrowth > 0 ? "↑" : "↓") @Math.Abs(ViewBag.EnrollmentGrowth)%
-                                    </span>
-                                </div>
-                            }
+                            <h4 class="mb-0">@ViewBag.TotalAssignments</h4>
+                            <small>Bài tập</small>
                         </div>
-                        <i class="fas fa-user-plus fa-3x opacity-50"></i>
+                        <i class="fas fa-tasks fa-2x opacity-50"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-2 col-md-4">
                 <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h4 class="mb-0">@ViewBag.TotalRevenue?.ToString("N0")</h4>
-                            <small>Doanh thu (VNĐ)</small>
-                            @if (ViewBag.RevenueGrowth != 0)
-                            {
-                                <div class="mt-1">
-                                    <span class="badge @(ViewBag.RevenueGrowth > 0 ? "bg-success" : "bg-danger")">
-                                        @(ViewBag.RevenueGrowth > 0 ? "↑" : "↓") @Math.Abs(ViewBag.RevenueGrowth)%
-                                    </span>
-                                </div>
-                            }
+                            <h4 class="mb-0">@ViewBag.TotalSubmissions</h4>
+                            <small>Bài nộp</small>
                         </div>
-                        <i class="fas fa-dollar-sign fa-3x opacity-50"></i>
+                        <i class="fas fa-file-upload fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-4">
+                <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0 text-dark">@ViewBag.TotalStudents</h4>
+                            <small class="text-dark">Học viên</small>
+                        </div>
+                        <i class="fas fa-users fa-2x opacity-50 text-dark"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-4">
+                <div class="stat-card" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">@ViewBag.TotalRevenue?.ToString("N0")</h4>
+                            <small>Doanh thu</small>
+                        </div>
+                        <i class="fas fa-dollar-sign fa-2x opacity-50"></i>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ========== ADDITIONAL METRICS ========== -->
+        <!-- ========== METRICS BỔ SUNG ========== -->
         <div class="row g-3 mb-4">
             <div class="col-lg-2 col-md-4">
-                <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
-                    <h5 class="mb-0 text-dark">@ViewBag.AverageRating?.ToString("F1") ⭐</h5>
-                    <small class="text-dark">Đánh giá TB</small>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-4">
-                <div class="stat-card" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
-                    <h5 class="mb-0">@ViewBag.PaymentStats.Paid</h5>
-                    <small>Đã thanh toán</small>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-4">
                 <div class="stat-card" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
-                    <h5 class="mb-0 text-dark">@ViewBag.PaymentStats.ConversionRate%</h5>
-                    <small class="text-dark">Tỷ lệ chuyển đổi</small>
+                    <h5 class="mb-0 text-dark">@ViewBag.AverageLessonsPerCourse?.ToString("F1")</h5>
+                    <small class="text-dark">Bài/Khóa TB</small>
                 </div>
             </div>
-            <div class="col-lg-2 col-md-4">
-                <div class="stat-card" style="background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);">
-                    <h5 class="mb-0">@ViewBag.StudentRetention.ActiveStudents</h5>
-                    <small>HV hoạt động (30d)</small>
-                </div>
-            </div>
+            @* <div class="col-lg-2 col-md-4"> *@
+            @*     <div class="stat-card" style="background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);"> *@
+            @*         <h5 class="mb-0">@ViewBag.SubmissionRate%</h5> *@
+            @*         <small>Tỷ lệ nộp bài</small> *@
+            @*     </div> *@
+            @* </div> *@
             <div class="col-lg-2 col-md-4">
                 <div class="stat-card" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
-                    <h5 class="mb-0 text-dark">@ViewBag.StudentRetention.RetentionRate%</h5>
-                    <small class="text-dark">Tỷ lệ quay lại</small>
+                    <h5 class="mb-0 text-dark">@ViewBag.AverageScore?.ToString("F1")</h5>
+                    <small class="text-dark">Điểm TB</small>
+                </div>
+            </div>
+            @* <div class="col-lg-2 col-md-4"> *@
+            @*     <div class="stat-card" style="background: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%);"> *@
+            @*         <h5 class="mb-0 text-dark">@ViewBag.TotalVideoDuration min</h5> *@
+            @*         <small class="text-dark">Tổng video</small> *@
+            @*     </div> *@
+            @* </div> *@
+            <div class="col-lg-2 col-md-4">
+                <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h5 class="mb-0">@ViewBag.AverageRating?.ToString("F1") ⭐</h5>
+                    <small>Đánh giá TB</small>
                 </div>
             </div>
             <div class="col-lg-2 col-md-4">
-                <div class="stat-card" style="background: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%);">
-                    <h5 class="mb-0 text-dark">@ViewBag.CompletionStats.AvgProgress?.ToString("F1")%</h5>
-                    <small class="text-dark">Tiến độ TB</small>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <h5 class="mb-0">@ViewBag.CompletionStats.AvgProgress?.ToString("F1")%</h5>
+                    <small>Tiến độ TB</small>
                 </div>
             </div>
         </div>
 
-        <!-- ========== DAILY TRENDS (30 days) ========== -->
+        <!-- ========== BIỂU ĐỒ THEO NGÀY (30 NGÀY) ========== -->
         <div class="row g-4 mb-4">
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 <div class="chart-container">
-                    <h5 class="text-center mb-3">📈 Đăng ký theo ngày (30 ngày gần nhất)</h5>
+                    <h5 class="text-center mb-3">📈 Đăng ký (30 ngày)</h5>
                     <canvas id="dailyEnrollmentChart"></canvas>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 <div class="chart-container">
-                    <h5 class="text-center mb-3">💰 Doanh thu theo ngày (30 ngày gần nhất)</h5>
+                    <h5 class="text-center mb-3">💰 Doanh thu (30 ngày)</h5>
                     <canvas id="dailyRevenueChart"></canvas>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="chart-container">
+                    <h5 class="text-center mb-3">📝 Bài nộp (30 ngày)</h5>
+                    <canvas id="dailySubmissionChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- ========== MONTHLY TRENDS ========== -->
+        <!-- ========== BIỂU ĐỒ THEO THÁNG ========== -->
         <div class="row g-4 mb-4">
             <div class="col-lg-12">
                 <div class="chart-container">
-                    <h5 class="text-center mb-3">📊 Xu hướng theo tháng (12 tháng)</h5>
+                    <h5 class="text-center mb-3">📊 Xu hướng 12 tháng (Đăng ký, Doanh thu, Bài nộp)</h5>
                     <canvas id="monthlyTrendChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- ========== HOURLY & DAY OF WEEK ========== -->
+        <!-- ========== BIỂU ĐỒ THEO GIỜ & NGÀY TRONG TUẦN ========== -->
         <div class="row g-4 mb-4">
             <div class="col-lg-6">
                 <div class="chart-container">
-                    <h5 class="text-center mb-3">🕐 Đăng ký theo giờ (Hôm nay)</h5>
+                    <h5 class="text-center mb-3">🕐 Hoạt động theo giờ (Hôm nay)</h5>
                     <canvas id="hourlyChart"></canvas>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="chart-container">
-                    <h5 class="text-center mb-3">📅 Đăng ký theo ngày trong tuần</h5>
+                    <h5 class="text-center mb-3">📅 Hoạt động theo ngày trong tuần</h5>
                     <canvas id="dayOfWeekChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- ========== CATEGORY & PRICE RANGE ========== -->
+        <!-- ========== PHÂN TÍCH ĐIỂM SỐ & GIÁ ========== -->
         <div class="row g-4 mb-4">
             <div class="col-lg-6">
                 <div class="chart-container">
-                    <h5 class="text-center mb-3">📚 Phân tích theo Danh mục</h5>
-                    <canvas id="categoryChart"></canvas>
+                    <h5 class="text-center mb-3">🎯 Phân bố Điểm số</h5>
+                    <canvas id="scoreRangeChart"></canvas>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="chart-container">
-                    <h5 class="text-center mb-3">💵 Phân bố theo Giá</h5>
+                    <h5 class="text-center mb-3">💵 Phân bố Giá khóa học</h5>
                     <canvas id="priceRangeChart"></canvas>
                 </div>
             </div>
         </div>
+
+        <!-- ========== THỐNG KÊ DANH MỤC ========== -->
         <div class="chart-container mb-4">
-            <h5 class="mb-3">🎯 Thống kê theo Cấp độ</h5>
+            <h5 class="text-center mb-3">📚 Phân tích theo Danh mục</h5>
+            <canvas id="categoryChart"></canvas>
+        </div>
+
+        <!-- ========== BẢNG BÀI TẬP THEO KHÓA HỌC ========== -->
+        <div class="chart-container mb-4">
+            <h5 class="mb-3">📝 Top 10 Khóa học theo Bài tập & Nộp bài</h5>
             <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                    <thead class="table-light">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-primary">
                         <tr>
                             <th>#</th>
-                            <th>Cấp độ</th>
-                            <th>Số khóa học</th> 
+                            <th>Khóa học</th>
+                            <th>Số bài học</th>
+                            <th>Số bài tập</th>
+                            <th>Bài nộp</th>
+                            <th>Điểm TB</th>
                         </tr>
                     </thead>
                     <tbody>
                         @{
-                            for (int i = 0; i < ViewBag.LevelLabels.Count; i++)
+                            int rank = 1;
+                            foreach (var item in ViewBag.AssignmentStatsByCourse)
                             {
                                 <tr>
-                                    <td>@(i + 1)</td>
-                                    <td>@(ViewBag.LevelLabels[i] == "Beginner" ? "Cơ bản" : ViewBag.LevelLabels[i] == "Intermediate" ? "Trung cấp" : "Nâng cao")</td>
-                                    <td>@ViewBag.LevelCounts[i]</td>
+                                    <td>@rank++</td>
+                                    <td><strong>@item.CourseName</strong></td>
+                                    <td><span class="badge bg-info">@item.TotalLessons</span></td>
+                                    <td><span class="badge bg-warning">@item.TotalAssignments</span></td>
+                                    <td><span class="badge bg-success">@item.TotalSubmissions</span></td>
+                                    <td><strong>@item.AvgScore.ToString("F1")</strong></td>
                                 </tr>
                             }
                         }
@@ -310,7 +386,7 @@
             </div>
         </div>
 
-        <!-- ========== TOP INSTRUCTORS ========== -->
+        <!-- ========== TOP GIẢNG VIÊN ========== -->
         <div class="chart-container mb-4">
             <h5 class="mb-3">👨‍🏫 Top 10 Giảng viên Xuất sắc</h5>
             <div class="table-responsive">
@@ -327,7 +403,7 @@
                     </thead>
                     <tbody>
                         @{
-                            int rank = 1;
+                            rank = 1;
                             foreach (var instructor in ViewBag.TopInstructors)
                             {
                                 <tr>
@@ -345,7 +421,7 @@
             </div>
         </div>
 
-        <!-- ========== TOP COURSES ========== -->
+        <!-- ========== TOP KHÓA HỌC ========== -->
         <div class="row g-4 mb-4">
             <div class="col-lg-6">
                 <div class="chart-container">
@@ -418,56 +494,98 @@
             </div>
         </div>
 
-        <!-- ========== RECENT ENROLLMENTS ========== -->
-        <div class="chart-container">
-            <h5 class="mb-3">🕐 Đăng ký gần đây</h5>
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered">
-                    <thead class="table-warning">
-                        <tr>
-                            <th>#</th>
-                            <th>Học viên</th>
-                            <th>Khóa học</th>
-                            <th>Ngày đăng ký</th>
-                            <th>Số tiền</th>
-                            <th>Trạng thái</th>
-                            <th>Tiến độ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @{
-                            rank = 1;
-                            foreach (var item in ViewBag.RecentEnrollments)
-                            {
+        <!-- ========== ĐĂNG KÝ & BÀI NỘP GẦN ĐÂY ========== -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-6">
+                <div class="chart-container">
+                    <h5 class="mb-3">🕐 Đăng ký gần đây</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead class="table-warning">
                                 <tr>
-                                    <td>@rank++</td>
-                                    <td>@item.StudentName</td>
-                                    <td>@item.CourseName</td>
-                                    <td>@item.EnrollDate.ToString("dd/MM/yyyy HH:mm")</td>
-                                    <td>@item.Amount?.ToString("N0") VNĐ</td>
-                                    <td>
-                                        @if (item.IsPaid)
-                                        {
-                                            <span class="badge bg-success">Đã thanh toán</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-danger">Chưa thanh toán</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        <div class="progress" style="height: 20px;">
-                                            <div class="progress-bar @(item.Progress >= 100 ? "bg-success" : item.Progress > 0 ? "bg-primary" : "bg-secondary")"
-                                                 style="width: @item.Progress%">
-                                                @item.Progress%
-                                            </div>
-                                        </div>
-                                    </td>
+                                    <th>Học viên</th>
+                                    <th>Khóa học</th>
+                                    <th>Ngày</th>
+                                    <th>Trạng thái</th>
                                 </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
+                            </thead>
+                            <tbody>
+                                @{
+                                    foreach (var item in ViewBag.RecentEnrollments)
+                                    {
+                                        <tr>
+                                            <td>@item.StudentName</td>
+                                            <td>@item.CourseName</td>
+                                            <td>@item.EnrollDate.ToString("dd/MM HH:mm")</td>
+                                            <td>
+                                                @if (item.IsPaid)
+                                                {
+                                                    <span class="badge bg-success">Đã TT</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">Chưa TT</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="chart-container">
+                    <h5 class="mb-3">📝 Bài nộp gần đây</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead class="table-info">
+                                <tr>
+                                    <th>Học viên</th>
+                                    <th>Bài tập</th>
+                                    <th>Ngày nộp</th>
+                                    <th>Điểm</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    foreach (var item in ViewBag.RecentSubmissions)
+                                    {
+                                        <tr>
+                                            <td>@item.StudentName</td>
+                                            <td>
+                                                @item.AssignmentTitle
+                                                <br><small class="text-muted">@item.CourseName</small>
+                                            </td>
+                                            <td>
+                                                @item.SubmittedAt.ToString("dd/MM HH:mm")
+                                                @if (item.IsLate)
+                                                {
+                                                    <span class="badge bg-danger">Trễ</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.Score != null) 
+                                                {
+                                                    <strong class="@(item.Score >= 80 ? "text-success" : item.Score >= 50 ? "text-warning" : "text-danger")">
+                                                        @item.Score
+                                                    </strong>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Chưa chấm</span>
+                                                }
+                                            </td>
+
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -491,7 +609,19 @@
         }
     }
 
-    // ========== DAILY ENROLLMENT CHART ==========
+    // Cấu hình chung
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            }
+        }
+    };
+
+    // ========== DAILY CHARTS ==========
     new Chart(document.getElementById('dailyEnrollmentChart'), {
         type: 'line',
         data: {
@@ -505,10 +635,9 @@
                 fill: true
             }]
         },
-        options: { responsive: true, maintainAspectRatio: true }
+        options: commonOptions
     });
 
-    // ========== DAILY REVENUE CHART ==========
     new Chart(document.getElementById('dailyRevenueChart'), {
         type: 'line',
         data: {
@@ -522,7 +651,23 @@
                 fill: true
             }]
         },
-        options: { responsive: true, maintainAspectRatio: true }
+        options: commonOptions
+    });
+
+    new Chart(document.getElementById('dailySubmissionChart'), {
+        type: 'line',
+        data: {
+            labels: @Html.Raw(Json.Serialize(ViewBag.DailyLabels)),
+            datasets: [{
+                label: 'Số bài nộp',
+                data: @Html.Raw(Json.Serialize(ViewBag.DailySubmissions)),
+                borderColor: 'rgb(153, 102, 255)',
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: commonOptions
     });
 
     // ========== MONTHLY TREND CHART ==========
@@ -536,23 +681,45 @@
                     data: @Html.Raw(Json.Serialize(ViewBag.MonthlyEnrollments)),
                     borderColor: 'rgb(54, 162, 235)',
                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    yAxisID: 'y'
+                    yAxisID: 'y',
+                    tension: 0.4
                 },
                 {
                     label: 'Doanh thu (VNĐ)',
                     data: @Html.Raw(Json.Serialize(ViewBag.MonthlyRevenue)),
                     borderColor: 'rgb(255, 99, 132)',
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    yAxisID: 'y1'
+                    yAxisID: 'y1',
+                    tension: 0.4
+                },
+                {
+                    label: 'Bài nộp',
+                    data: @Html.Raw(Json.Serialize(ViewBag.MonthlySubmissions)),
+                    borderColor: 'rgb(153, 102, 255)',
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    yAxisID: 'y',
+                    tension: 0.4
                 }
             ]
         },
         options: {
             responsive: true,
             interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { display: true, position: 'top' }
+            },
             scales: {
-                y: { type: 'linear', position: 'left' },
-                y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false } }
+                y: {
+                    type: 'linear',
+                    position: 'left',
+                    title: { display: true, text: 'Đăng ký / Bài nộp' }
+                },
+                y1: {
+                    type: 'linear',
+                    position: 'right',
+                    title: { display: true, text: 'Doanh thu (VNĐ)' },
+                    grid: { drawOnChartArea: false }
+                }
             }
         }
     });
@@ -562,13 +729,28 @@
         type: 'bar',
         data: {
             labels: @Html.Raw(Json.Serialize(ViewBag.HourlyLabels)),
-            datasets: [{
-                label: 'Số đăng ký',
-                data: @Html.Raw(Json.Serialize(ViewBag.HourlyEnrollments)),
-                backgroundColor: 'rgba(54, 162, 235, 0.8)'
-            }]
+            datasets: [
+                {
+                    label: 'Đăng ký',
+                    data: @Html.Raw(Json.Serialize(ViewBag.HourlyEnrollments)),
+                    backgroundColor: 'rgba(54, 162, 235, 0.8)'
+                },
+                {
+                    label: 'Bài nộp',
+                    data: @Html.Raw(Json.Serialize(ViewBag.HourlySubmissions)),
+                    backgroundColor: 'rgba(153, 102, 255, 0.8)'
+                }
+            ]
         },
-        options: { responsive: true }
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true, position: 'top' }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
     });
 
     // ========== DAY OF WEEK CHART ==========
@@ -576,44 +758,53 @@
         type: 'bar',
         data: {
             labels: @Html.Raw(Json.Serialize(ViewBag.DayOfWeekLabels)),
-            datasets: [{
-                label: 'Số đăng ký',
-                data: @Html.Raw(Json.Serialize(ViewBag.DayOfWeekEnrollments)),
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.8)',
-                    'rgba(54, 162, 235, 0.8)',
-                    'rgba(255, 206, 86, 0.8)',
-                    'rgba(75, 192, 192, 0.8)',
-                    'rgba(153, 102, 255, 0.8)',
-                    'rgba(255, 159, 64, 0.8)',
-                    'rgba(199, 199, 199, 0.8)'
-                ]
-            }]
-        },
-        options: { responsive: true }
-    });
-
-    // ========== CATEGORY CHART ==========
-        new Chart(document.getElementById('categoryChart'), {
-        type: 'bar',
-        data: {
-            labels: @Html.Raw(Json.Serialize(ViewBag.CategoryLabels)),
             datasets: [
-                { label: 'Số khóa học', data: @Html.Raw(Json.Serialize(ViewBag.CategoryCounts)), backgroundColor: 'rgba(75, 192, 192, 0.8)' },
-                { label: 'Số đăng ký', data: @Html.Raw(Json.Serialize(ViewBag.CategoryEnrollments)), backgroundColor: 'rgba(255, 159, 64, 0.8)' },
-                { label: 'Doanh thu', data: @Html.Raw(Json.Serialize(ViewBag.CategoryRevenue)), backgroundColor: 'rgba(54, 162, 235, 0.8)' },
-                { label: 'Điểm TB', data: @Html.Raw(Json.Serialize(ViewBag.CategoryAvgRating)), backgroundColor: 'rgba(153, 102, 255, 0.8)' }
+                {
+                    label: 'Đăng ký',
+                    data: @Html.Raw(Json.Serialize(ViewBag.DayOfWeekEnrollments)),
+                    backgroundColor: 'rgba(54, 162, 235, 0.8)'
+                },
+                {
+                    label: 'Bài nộp',
+                    data: @Html.Raw(Json.Serialize(ViewBag.DayOfWeekSubmissions)),
+                    backgroundColor: 'rgba(153, 102, 255, 0.8)'
+                }
             ]
         },
         options: {
             responsive: true,
-            indexAxis: 'y',
+            plugins: {
+                legend: { display: true, position: 'top' }
+            },
             scales: {
-                x: { beginAtZero: true }
+                y: { beginAtZero: true }
             }
         }
     });
 
+    // ========== SCORE RANGE CHART ==========
+    new Chart(document.getElementById('scoreRangeChart'), {
+        type: 'doughnut',
+        data: {
+            labels: @Html.Raw(Json.Serialize(ViewBag.ScoreRangeLabels)),
+            datasets: [{
+                data: @Html.Raw(Json.Serialize(ViewBag.ScoreRangeCounts)),
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(255, 159, 64, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(75, 192, 192, 0.8)',
+                    'rgba(54, 162, 235, 0.8)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true, position: 'right' }
+            }
+        }
+    });
 
     // ========== PRICE RANGE CHART ==========
     new Chart(document.getElementById('priceRangeChart'), {
@@ -631,6 +822,51 @@
                 ]
             }]
         },
-        options: { responsive: true }
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true, position: 'right' }
+            }
+        }
+    });
+
+    // ========== CATEGORY CHART ==========
+    new Chart(document.getElementById('categoryChart'), {
+        type: 'bar',
+        data: {
+            labels: @Html.Raw(Json.Serialize(ViewBag.CategoryLabels)),
+            datasets: [
+                {
+                    label: 'Số khóa học',
+                    data: @Html.Raw(Json.Serialize(ViewBag.CategoryCounts)),
+                    backgroundColor: 'rgba(75, 192, 192, 0.8)'
+                },
+                {
+                    label: 'Số đăng ký',
+                    data: @Html.Raw(Json.Serialize(ViewBag.CategoryEnrollments)),
+                    backgroundColor: 'rgba(255, 159, 64, 0.8)'
+                },
+                {
+                    label: 'Doanh thu',
+                    data: @Html.Raw(Json.Serialize(ViewBag.CategoryRevenue)),
+                    backgroundColor: 'rgba(54, 162, 235, 0.8)'
+                },
+                {
+                    label: 'Điểm TB',
+                    data: @Html.Raw(Json.Serialize(ViewBag.CategoryAvgRating)),
+                    backgroundColor: 'rgba(153, 102, 255, 0.8)'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            indexAxis: 'y',
+            plugins: {
+                legend: { display: true, position: 'top' }
+            },
+            scales: {
+                x: { beginAtZero: true }
+            }
+        }
     });
 </script>

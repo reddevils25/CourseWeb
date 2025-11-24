@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .auth-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 50px 0;
+    }
+
+    .auth-card {
+        background: white;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        width: 100%;
+        max-width: 450px;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+        .auth-header h2 {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .btn-login {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 12px;
+        font-weight: bold;
+        transition: transform 0.3s;
+    }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+</style>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <i class="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
+            <h2>Đăng nhập</h2>
+            <p class="text-muted">Chào mừng bạn quay trở lại!</p>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle"></i> @ViewBag.Error
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (ViewBag.Success != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i> @ViewBag.Success
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <form method="post" asp-action="Login" asp-controller="Account">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-envelope"></i> Email
+                </label>
+                <input type="email" name="email" class="form-control"
+                       placeholder="example@email.com" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-lock"></i> Mật khẩu
+                </label>
+                <input type="password" name="password" class="form-control"
+                       placeholder="••••••••" required>
+            </div>
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="rememberMe">
+                <label class="form-check-label" for="rememberMe">
+                    Ghi nhớ đăng nhập
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-login w-100 mb-3">
+                <i class="fas fa-sign-in-alt"></i> Đăng nhập
+            </button>
+
+            <div class="text-center">
+                <p class="mb-0">
+                    Chưa có tài khoản?
+                    <a asp-action="Register" asp-controller="Account" class="text-primary fw-bold">
+                        Đăng ký ngay
+                    </a>
+                </p>
+            </div>
+        </form>
+
+        <!-- Demo Accounts -->
+        <hr class="my-4">
+        <div class="text-center">
+            <small class="text-muted d-block mb-2">Tài khoản demo:</small>
+            <div class="d-flex justify-content-around flex-wrap gap-2">
+                <button class="btn btn-sm btn-outline-primary" onclick="fillLogin('phuongzpz1101@gmail.com', 'phuong123')">
+                    Admin
+                </button>
+                <button class="btn btn-sm btn-outline-info" onclick="fillLogin('phuongzbz1101@gmail.com', 'phuong123')">
+                    Instructor
+                </button>
+                <button class="btn btn-sm btn-outline-success" onclick="fillLogin('student@coursehub.com', 'student123')">
+                    Student
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+<script>
+    function fillLogin(email, password) {
+        document.querySelector('input[name="email"]').value = email;
+        document.querySelector('input[name="password"]').value = password;
+    }
+</script>

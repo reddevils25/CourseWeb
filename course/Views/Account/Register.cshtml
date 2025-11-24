@@ -1,0 +1,135 @@
+﻿@{
+    ViewData["Title"] = "Đăng ký";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .auth-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 50px 0;
+    }
+
+    .auth-card {
+        background: white;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+        .auth-header h2 {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .btn-register {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 12px;
+        font-weight: bold;
+        transition: transform 0.3s;
+    }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+</style>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+            <h2>Đăng ký tài khoản</h2>
+            <p class="text-muted">Bắt đầu hành trình học tập của bạn!</p>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle"></i> @ViewBag.Error
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <form method="post" asp-action="Register" asp-controller="Account">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-user"></i> Họ và tên
+                </label>
+                <input type="text" name="fullName" class="form-control"
+                       placeholder="Nguyễn Văn A" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-envelope"></i> Email
+                </label>
+                <input type="email" name="email" class="form-control"
+                       placeholder="example@email.com" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-lock"></i> Mật khẩu
+                </label>
+                <input type="password" name="password" class="form-control"
+                       placeholder="••••••••" required minlength="6">
+                <small class="text-muted">Tối thiểu 6 ký tự</small>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-lock"></i> Xác nhận mật khẩu
+                </label>
+                <input type="password" name="confirmPassword" class="form-control"
+                       placeholder="••••••••" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-user-tag"></i> Vai trò
+                </label>
+                <select name="role" class="form-select">
+                    <option value="Student" selected>Học viên</option>
+                    <option value="Instructor">Giảng viên</option> 
+                </select>
+                <small class="text-muted">Chọn vai trò phù hợp với mục đích sử dụng</small>
+            </div>
+
+            <button type="submit" class="btn btn-register w-100 mb-3">
+                <i class="fas fa-user-plus"></i> Đăng ký
+            </button>
+
+            <div class="text-center">
+                <p class="mb-0">
+                    Đã có tài khoản?
+                    <a asp-action="Login" asp-controller="Account" class="text-primary fw-bold">
+                        Đăng nhập ngay
+                    </a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>

@@ -17,7 +17,7 @@ public partial class User
 
     public string? Avatar { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public virtual ICollection<BlogComment> BlogComments { get; set; } = new List<BlogComment>();
 

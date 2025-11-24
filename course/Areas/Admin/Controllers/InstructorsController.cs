@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using course.Models;
+using course.Attributes;
 
 namespace course.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AdminAuthorize]
     public class InstructorsController : Controller
     {
         private readonly CourseContext _context;
