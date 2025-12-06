@@ -1,0 +1,144 @@
+﻿@model course.Models.Course
+@{
+    ViewData["Title"] = "Học: " + Model.Title;
+    var enrollment = ViewBag.Enrollment as course.Models.Enrollment;
+    string previewVideo = ViewBag.PreviewVideo as string ?? "";
+}
+
+<div class="container my-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h3>@Model.Title</h3>
+                    <p class="text-muted">Giảng viên: @Model.Instructor.User.FullName</p>
+                    <p>@Model.Subtitle</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <!-- Video player: nếu lưu iframe trong DB thì render trực tiếp -->
+                    @if (!string.IsNullOrWhiteSpace(previewVideo))
+                    {
+                        <div class="mb-3 embed-responsive embed-responsive-16by9">
+                            @Html.Raw(previewVideo)
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">Hiện chưa có video cho bài học này.</div>
+                    }
+
+                    <!-- Thông tin tiến độ -->
+                    <div class="mb-3">
+                        <strong>Tiến độ: </strong>
+                        <div class="progress" style="height:20px;">
+                            <div class="progress-bar @(enrollment.Progress >= 100 ? "bg-success" : "bg-primary")"
+                                 role="progressbar"
+                                 style="width:@(enrollment.Progress ?? 0)%"
+                                 aria-valuenow="@(enrollment.Progress ?? 0)" aria-valuemin="0" aria-valuemax="100">
+                                @(enrollment.Progress ?? 0)%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nút Next / Mark complete -->
+                    <div class="mb-3">
+                        <button id="btnMarkComplete" class="btn btn-success">Đánh dấu đã hoàn thành bài này</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header">Danh sách bài học</div>
+                <div class="list-group list-group-flush">
+                    @if (Model.Lessons != null && Model.Lessons.Any())
+                    {
+                        foreach (var lesson in Model.Lessons.OrderBy(l => l.LessonId))
+                        {
+                            <a href="#"
+                               class="list-group-item list-group-item-action lesson-item"
+                               data-video='@Html.Raw(System.Net.WebUtility.HtmlEncode(lesson.VideoUrl ?? ""))'
+                               data-lessonid="@lesson.LessonId">
+                                <strong>@lesson.Title</strong>
+                                <div>
+                                    <small>@(lesson.Duration.ToString() ?? "")</small>
+                                </div>
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <div class="list-group-item">Chưa có bài học.</div>
+                    }
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body text-center">
+                    <p><strong>Khóa học</strong></p>
+                    <p>@Model.EnrollCount Sinh viên</p>
+                    <a href="/Profile" class="btn btn-outline-primary">Trang cá nhân</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Khi click vào một lesson, load video vào player (thay iframe)
+    document.querySelectorAll('.lesson-item').forEach(function (el) {
+        el.addEventListener('click', function (e) {
+            e.preventDefault();
+            // video lưu trong data-video (HTML encoded). Lấy và decode
+            var encoded = this.getAttribute('data-video') || "";
+            var videoHtml = decodeHtml(encoded);
+            // thay thế phần player bằng video mới
+            var container = document.querySelector('.card .embed-responsive') || null;
+            if (container) {
+                container.innerHTML = videoHtml;
+            } else {
+                // tạo mới
+                var cardBody = document.querySelector('.card .card-body');
+                if (cardBody) {
+                    var div = document.createElement('div');
+                    div.className = 'mb-3 embed-responsive embed-responsive-16by9';
+                    div.innerHTML = videoHtml;
+                    // chèn lên đầu cardBody
+                    cardBody.insertBefore(div, cardBody.firstChild);
+                }
+            }
+        });
+    });
+
+    // decode HTML entity (simple)
+    function decodeHtml(html) {
+        var txt = document.createElement('textarea');
+        txt.innerHTML = html;
+        return txt.value;
+    }
+
+    // Mark complete: gửi AJAX để cập nhật progress (nếu bạn có API)
+    document.getElementById('btnMarkComplete')?.addEventListener('click', async function () {
+        // Gọi API hoặc action để update tiến độ:
+        try {
+            const resp = await fetch('/Enrollment/UpdateProgress', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ EnrollmentId: @((enrollment?.EnrollmentId) ?? 0), Progress: 100 })
+            });
+            if (resp.ok) {
+                alert('Đã cập nhật tiến độ lên 100%');
+                location.reload();
+            } else {
+                alert('Cập nhật không thành công');
+            }
+        } catch (e) {
+            alert('Lỗi khi cập nhật');
+        }
+    });
+</script>

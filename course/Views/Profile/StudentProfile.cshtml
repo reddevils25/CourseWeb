@@ -260,9 +260,10 @@
                                 </div>
                             </div>
                             <div class="col-md-4 text-end align-self-center">
-                                <a href="/Courses/Detail/@enrollment.Course.CourseId" class="btn btn-primary mb-2">
+                                <a href="/Course/Learn/@enrollment.Course.CourseId" class="btn btn-primary mb-2">
                                     <i class="fas fa-play"></i> @(enrollment.Progress > 0 ? "Tiếp tục học" : "Bắt đầu học")
                                 </a>
+
                                 @if (enrollment.HasCertificate)
                                 {
                                     <br />
@@ -287,6 +288,12 @@
             }
         </div>
     </div>
+    <div class="col-md-2 text-center">
+        <a href="/Account/Logout" class="btn btn-danger mt-3">
+            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+        </a>
+    </div>
+
 </div>
 
 <script>

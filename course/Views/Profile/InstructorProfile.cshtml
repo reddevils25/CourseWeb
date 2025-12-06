@@ -11,6 +11,13 @@
         padding: 40px 0;
         margin-bottom: 30px;
         border-radius: 10px;
+        position: relative;
+    }
+
+    .logout-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
     }
 
     .stat-card {
@@ -103,11 +110,61 @@
         border-radius: 8px;
         margin-bottom: 20px;
     }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 0;
+        border: none;
+        border-radius: 10px;
+        width: 80%;
+        max-width: 800px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .close {
+        color: white;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: #ddd;
+        }
 </style>
 
 <div class="container">
     <!-- Header Profile -->
     <div class="profile-header">
+        <a href="/Account/Logout" class="btn btn-light logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+        </a>
         <div class="row align-items-center">
             <div class="col-md-2 text-center">
                 <img src="@Model.User.Avatar" alt="Avatar" class="rounded-circle"
@@ -201,12 +258,6 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label>LinkedIn</label>
-                            <input type="text" class="form-control" name="linkedin" value="@Model.LinkedIn">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
                             <label>Website</label>
                             <input type="text" class="form-control" name="website" value="@Model.Website">
                         </div>
@@ -256,9 +307,9 @@
         </div>
         <div id="courses" class="section-content">
             <div class="mb-3">
-                <a href="/Instructor/Courses/Create" class="btn btn-success">
+                <button onclick="openCourseModal()" class="btn btn-success">
                     <i class="fas fa-plus"></i> Thêm khóa học mới
-                </a>
+                </button>
             </div>
 
             @if (ViewBag.Courses != null && ViewBag.Courses.Count > 0)
@@ -269,7 +320,7 @@
                         <div class="row align-items-center">
                             <div class="col-md-8">
                                 <h5>@course.Title</h5>
-                                <p class="text-muted mb-1">@course.Description</p>
+                                <p class="text-muted mb-1">@Html.Raw(course.Description)</p>
                                 <small>
                                     <span class="badge bg-primary">@course.Lessons.Count bài giảng</span>
                                     <span class="badge bg-info">@course.Enrollments.Count học viên</span>
@@ -277,9 +328,9 @@
                                 </small>
                             </div>
                             <div class="col-md-4 text-end">
-                                <a href="/Instructor/Courses/Edit/@course.CourseId" class="btn btn-sm btn-primary btn-action">
+                                <button onclick="editCourse(@course.CourseId)" class="btn btn-sm btn-primary btn-action">
                                     <i class="fas fa-edit"></i> Sửa
-                                </a>
+                                </button>
                                 <button onclick="deleteCourse(@course.CourseId)" class="btn btn-sm btn-danger btn-action">
                                     <i class="fas fa-trash"></i> Xóa
                                 </button>
@@ -305,9 +356,9 @@
                                                     </small>
                                                 </div>
                                                 <div class="col-md-4 text-end">
-                                                    <a href="/Instructor/Lessons/Edit/@lesson.LessonId" class="btn btn-sm btn-outline-primary">
+                                                    <button onclick="editLesson(@lesson.LessonId, @course.CourseId)" class="btn btn-sm btn-outline-primary">
                                                         <i class="fas fa-edit"></i>
-                                                    </a>
+                                                    </button>
                                                     <button onclick="deleteLesson(@lesson.LessonId)" class="btn btn-sm btn-outline-danger">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
@@ -320,10 +371,9 @@
                                 {
                                     <p class="text-muted" style="margin-left: 20px;">Chưa có bài giảng nào</p>
                                 }
-                                <a href="/Instructor/Lessons/Create?courseId=@course.CourseId"
-                                   class="btn btn-sm btn-success mt-2" style="margin-left: 20px;">
+                                <button onclick="openLessonModal(@course.CourseId)" class="btn btn-sm btn-success mt-2" style="margin-left: 20px;">
                                     <i class="fas fa-plus"></i> Thêm bài giảng
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -333,6 +383,104 @@
             {
                 <p class="text-muted">Chưa có khóa học nào</p>
             }
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm/Sửa Khóa học -->
+<div id="courseModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="courseModalTitle">Thêm khóa học mới</h3>
+            <span class="close" onclick="closeCourseModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="courseForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="courseId" name="courseId" value="0">
+
+                <div class="form-group">
+                    <label>Tiêu đề khóa học <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="courseTitle" name="title" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Mô tả</label>
+                    <textarea class="form-control" id="courseDescription" name="description" rows="3"></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Giá (VNĐ) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="coursePrice" name="price" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Thời lượng (giờ)</label>
+                            <input type="number" class="form-control" id="courseDuration" name="duration">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Hình ảnh URL</label>
+                    <input type="text" class="form-control" id="courseImage" name="image">
+                </div>
+
+                <div class="text-end">
+                    <button type="button" class="btn btn-secondary" onclick="closeCourseModal()">Hủy</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Lưu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm/Sửa Bài giảng -->
+<div id="lessonModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="lessonModalTitle">Thêm bài giảng mới</h3>
+            <span class="close" onclick="closeLessonModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="lessonForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="lessonId" name="lessonId" value="0">
+                <input type="hidden" id="lessonCourseId" name="courseId">
+
+                <div class="form-group">
+                    <label>Tiêu đề bài giảng <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="lessonTitle" name="title" required>
+                </div>
+
+                <div class="form-group">
+                    <label>URL Video <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="lessonVideoUrl" name="videoUrl" required>
+                    <small class="text-muted">YouTube hoặc link video trực tiếp</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Thời lượng (phút)</label>
+                    <input type="number" class="form-control" id="lessonDuration" name="duration">
+                </div>
+
+                <div class="form-group">
+                    <label>Nội dung</label>
+                    <textarea class="form-control" id="lessonContent" name="content" rows="4"></textarea>
+                </div>
+
+                <div class="text-end">
+                    <button type="button" class="btn btn-secondary" onclick="closeLessonModal()">Hủy</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Lưu
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -347,15 +495,12 @@
             content.classList.remove('show');
             header.classList.remove('active');
         } else {
-            // Đóng tất cả sections khác
             document.querySelectorAll('.section-content').forEach(sc => {
                 sc.classList.remove('show');
             });
             document.querySelectorAll('.section-header').forEach(sh => {
                 sh.classList.remove('active');
             });
-
-            // Mở section hiện tại
             content.classList.add('show');
             header.classList.add('active');
         }
@@ -364,11 +509,7 @@
     // Toggle lessons
     function toggleLessons(courseId) {
         const lessonsDiv = document.getElementById('lessons-' + courseId);
-        if (lessonsDiv.style.display === 'none') {
-            lessonsDiv.style.display = 'block';
-        } else {
-            lessonsDiv.style.display = 'none';
-        }
+        lessonsDiv.style.display = lessonsDiv.style.display === 'none' ? 'block' : 'none';
     }
 
     // Show alert
@@ -377,34 +518,65 @@
         alertDiv.className = `alert alert-${type}`;
         alertDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : 'times'}-circle"></i> ${message}`;
         alertDiv.style.display = 'block';
-
-        setTimeout(() => {
-            alertDiv.style.display = 'none';
-        }, 3000);
-
-        // Scroll to top
+        setTimeout(() => alertDiv.style.display = 'none', 3000);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Course Modal Functions
+    function openCourseModal() {
+        document.getElementById('courseModalTitle').textContent = 'Thêm khóa học mới';
+        document.getElementById('courseForm').reset();
+        document.getElementById('courseId').value = '0';
+        document.getElementById('courseModal').style.display = 'block';
+    }
+
+    function closeCourseModal() {
+        document.getElementById('courseModal').style.display = 'none';
+    }
+
+    function editCourse(courseId) {
+        // Load course data and open modal
+        // You'll need to implement loading course data via AJAX
+        alert('Chức năng sửa khóa học - courseId: ' + courseId);
+    }
+
+    // Lesson Modal Functions
+    function openLessonModal(courseId) {
+        document.getElementById('lessonModalTitle').textContent = 'Thêm bài giảng mới';
+        document.getElementById('lessonForm').reset();
+        document.getElementById('lessonId').value = '0';
+        document.getElementById('lessonCourseId').value = courseId;
+        document.getElementById('lessonModal').style.display = 'block';
+    }
+
+    function closeLessonModal() {
+        document.getElementById('lessonModal').style.display = 'none';
+    }
+
+    function editLesson(lessonId, courseId) {
+        // Load lesson data and open modal
+        alert('Chức năng sửa bài giảng - lessonId: ' + lessonId);
+    }
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+        const courseModal = document.getElementById('courseModal');
+        const lessonModal = document.getElementById('lessonModal');
+        if (event.target === courseModal) closeCourseModal();
+        if (event.target === lessonModal) closeLessonModal();
     }
 
     // Update profile form
     document.getElementById('profileForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-
         const formData = new FormData(this);
-
         try {
             const response = await fetch('/Profile/UpdateProfile', {
                 method: 'POST',
                 body: formData
             });
-
             const result = await response.json();
-
-            if (result.success) {
-                showAlert(result.message, 'success');
-            } else {
-                showAlert(result.message, 'danger');
-            }
+            showAlert(result.message, result.success ? 'success' : 'danger');
         } catch (error) {
             showAlert('Có lỗi xảy ra', 'danger');
         }
@@ -413,17 +585,13 @@
     // Change password form
     document.getElementById('passwordForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-
         const formData = new FormData(this);
-
         try {
             const response = await fetch('/Profile/ChangePassword', {
                 method: 'POST',
                 body: formData
             });
-
             const result = await response.json();
-
             if (result.success) {
                 showAlert(result.message, 'success');
                 this.reset();
@@ -435,24 +603,68 @@
         }
     });
 
+    // Course form submit
+    document.getElementById('courseForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const courseId = document.getElementById('courseId').value;
+        const url = courseId === '0' ? '/Profile/CreateCourse' : '/Profile/UpdateCourse';
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            if (result.success) {
+                showAlert(result.message, 'success');
+                closeCourseModal();
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showAlert(result.message, 'danger');
+            }
+        } catch (error) {
+            showAlert('Có lỗi xảy ra', 'danger');
+        }
+    });
+
+    // Lesson form submit
+    document.getElementById('lessonForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const lessonId = document.getElementById('lessonId').value;
+        const url = lessonId === '0' ? '/Profile/CreateLesson' : '/Profile/UpdateLesson';
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            if (result.success) {
+                showAlert(result.message, 'success');
+                closeLessonModal();
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showAlert(result.message, 'danger');
+            }
+        } catch (error) {
+            showAlert('Có lỗi xảy ra', 'danger');
+        }
+    });
+
     // Delete course
     async function deleteCourse(courseId) {
-        if (!confirm('Bạn có chắc muốn xóa khóa học này? Tất cả bài giảng và đăng ký sẽ bị xóa.')) {
-            return;
-        }
-
+        if (!confirm('Bạn có chắc muốn xóa khóa học này? Tất cả bài giảng và đăng ký sẽ bị xóa.')) return;
         const formData = new FormData();
         formData.append('id', courseId);
         formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
-
         try {
             const response = await fetch('/Profile/DeleteCourse', {
                 method: 'POST',
                 body: formData
             });
-
             const result = await response.json();
-
             if (result.success) {
                 showAlert(result.message, 'success');
                 setTimeout(() => location.reload(), 1500);
@@ -466,22 +678,16 @@
 
     // Delete lesson
     async function deleteLesson(lessonId) {
-        if (!confirm('Bạn có chắc muốn xóa bài giảng này?')) {
-            return;
-        }
-
+        if (!confirm('Bạn có chắc muốn xóa bài giảng này?')) return;
         const formData = new FormData();
         formData.append('id', lessonId);
         formData.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
-
         try {
             const response = await fetch('/Profile/DeleteLesson', {
                 method: 'POST',
                 body: formData
             });
-
             const result = await response.json();
-
             if (result.success) {
                 showAlert(result.message, 'success');
                 setTimeout(() => location.reload(), 1500);
