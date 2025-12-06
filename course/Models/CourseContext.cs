@@ -144,6 +144,8 @@ public partial class CourseContext : DbContext
                 .HasDefaultValue(0m)
                 .HasColumnType("decimal(3, 2)");
             entity.Property(e => e.Thumbnail).HasMaxLength(255);
+            entity.Property(e => e.Subtitle).HasMaxLength(255);
+
             entity.Property(e => e.Title).HasMaxLength(200);
 
             entity.HasOne(d => d.Category).WithMany(p => p.Courses)

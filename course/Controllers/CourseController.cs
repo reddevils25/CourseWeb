@@ -45,7 +45,23 @@ namespace course.Controllers
      .Take(5)
      .ToList();
 
+            var previewVideo = course.Lessons
+    .OrderBy(l => l.LessonId)
+    .FirstOrDefault()?.VideoUrl;
+
+            ViewBag.PreviewVideo = previewVideo;
+
+            var reviewList = ViewBag.courseReview as List<CourseReview>;
+
+            ViewBag.AvgRating = reviewList.Count > 0
+                ? reviewList.Average(r => r.Rating)
+                : 0;
+
+            ViewBag.TotalReview = reviewList.Count;
+
+
             return View(course);
+
         }
         public IActionResult Index()
         {

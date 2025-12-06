@@ -11,6 +11,7 @@ public partial class Course
 
     public string Title { get; set; } = null!;
 
+    public string? Subtitle { get; set; }
     public string? Description { get; set; }
 
     public decimal? Price { get; set; }

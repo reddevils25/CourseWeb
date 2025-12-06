@@ -16,7 +16,7 @@ public partial class Enrollment
 
     public double? Progress { get; set; }
 
-    public bool? HasCertificate { get; set; }
+    public bool HasCertificate { get; set; }
 
     public decimal? Amount { get; set; }
 

@@ -3,6 +3,20 @@
     List<CourseReview> courseReview = ViewBag.courseReview;
     List<Course> courseRelated = ViewBag.courseRelated;
 }
+<style>
+    #btnEnroll {
+        background-color: #ec5252;
+        border: none;
+        padding: 14px;
+        font-size: 20px;
+        font-weight: 600;
+        border-radius: 8px;
+    }
+
+        #btnEnroll:hover {
+            background-color: #c44141;
+        }
+</style>
 
 <main class="main">
 
@@ -34,10 +48,10 @@
                                 <span class="level">@Model.Level</span>
                             </div>
                             <h1>@Model.Title</h1>
-                            <p class="course-subtitle">@Model.Description</p>
+                            <p class="course-subtitle">@Model.Subtitle</p>
 
                             <div class="instructor-card">
-                                <img src="assets/img/person/person-m-8.webp" alt="Instructor" class="instructor-image">
+                                <img src="@Model.Instructor.User.Avatar" alt="Instructor" class="instructor-image">
                                 <div class="instructor-details">
                                     <h5>Giáo sư @Model.Instructor.User.FullName</h5>
                                     <span>@Model.Instructor.Bio</span>
@@ -47,20 +61,24 @@
                                         <i class="bi bi-star-fill"></i>
                                         <i class="bi bi-star-fill"></i>
                                         <i class="bi bi-star-half"></i>
-                                        <span>4.8 (1,247 reviews)</span>
+                                        <span>@ViewBag.AvgRating.ToString("0.0") @ViewBag.TotalReview</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="hero-image">
-                            <img src="assets/img/education/courses-8.webp" alt="Course Preview" class="img-fluid">
-                            <div class="play-overlay">
-                                <button class="play-btn">
-                                    <i class="bi bi-play-fill"></i>
-                                </button>
-                                <span>Watch Preview</span>
-                            </div>
+
+                            @if (ViewBag.PreviewVideo != null)
+                            {
+                                @Html.Raw(ViewBag.PreviewVideo)
+                            }
+                            else
+                            {
+                                <img src="~/img/default-course.jpg" class="img-fluid" />
+                            }
+
                         </div>
+
                     </div><!-- End Course Hero -->
                     <!-- Course Navigation Tabs -->
                     <div class="course-nav-tabs" data-aos="fade-up" data-aos-delay="300">
@@ -88,75 +106,7 @@
                         <div class="tab-content" id="course-detailsCourseTabContent">
 
                             <!-- Overview Tab -->
-                            <div class="tab-pane fade show active" id="course-detailsoverview" role="tabpanel">
-
-                                <div class="overview-section">
-                                    <h3>Course Description</h3>
-                                    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
-                                    <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
-                                </div>
-
-                                <div class="skills-grid">
-                                    <h3>Skills You'll Gain</h3>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="skill-item">
-                                                <div class="skill-icon">
-                                                    <i class="bi bi-code-slash"></i>
-                                                </div>
-                                                <div class="skill-content">
-                                                    <h5>Frontend Development</h5>
-                                                    <p>React, JavaScript ES6+, HTML5 &amp; CSS3</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="skill-item">
-                                                <div class="skill-icon">
-                                                    <i class="bi bi-server"></i>
-                                                </div>
-                                                <div class="skill-content">
-                                                    <h5>Backend Development</h5>
-                                                    <p>Node.js, Express.js, RESTful APIs</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="skill-item">
-                                                <div class="skill-icon">
-                                                    <i class="bi bi-database"></i>
-                                                </div>
-                                                <div class="skill-content">
-                                                    <h5>Database Management</h5>
-                                                    <p>MongoDB, Mongoose, Data Modeling</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="skill-item">
-                                                <div class="skill-icon">
-                                                    <i class="bi bi-shield-check"></i>
-                                                </div>
-                                                <div class="skill-content">
-                                                    <h5>Security &amp; Testing</h5>
-                                                    <p>Authentication, JWT, Unit Testing</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="requirements-section">
-                                    <h3>Requirements</h3>
-                                    <ul class="requirements-list">
-                                        <li><i class="bi bi-check2"></i>Basic understanding of HTML and CSS</li>
-                                        <li><i class="bi bi-check2"></i>Familiarity with JavaScript fundamentals</li>
-                                        <li><i class="bi bi-check2"></i>Computer with internet connection</li>
-                                        <li><i class="bi bi-check2"></i>Text editor or IDE installed</li>
-                                    </ul>
-                                </div>
-
-                            </div><!-- End Overview Tab -->
+                       @Html.Raw(Model.Description)
                             <!-- Curriculum Tab -->
                             <div class="tab-pane fade" id="course-detailscurriculum" role="tabpanel">
 
@@ -233,57 +183,56 @@
                                 <div class="reviews-summary">
                                     <div class="rating-overview">
                                         <div class="overall-rating">
-                                            <div class="rating-number">4.8</div>
-                                            <div class="rating-stars">
-                                                <i class="bi bi-star-fill"></i>
-                                                <i class="bi bi-star-fill"></i>
-                                                <i class="bi bi-star-fill"></i>
-                                                <i class="bi bi-star-fill"></i>
-                                                <i class="bi bi-star-half"></i>
-                                            </div>
-                                            <div class="rating-text">1,247 reviews</div>
+                                            <<div class="rating-number">@ViewBag.AvgRating.ToString("0.0")</div>
+                                            <div class="rating-text">@ViewBag.TotalReview đánh giá</div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="reviews-list">
-                                    <div class="review-item">
-                                        <div class="reviewer-info">
-                                            <img src="assets/img/person/person-f-12.webp" alt="Reviewer" class="reviewer-avatar">
-                                            <div class="reviewer-details">
-                                                <h6>Jessica Chen</h6>
-                                                <div class="review-rating">
-                                                    <i class="bi bi-star-fill"></i>
-                                                    <i class="bi bi-star-fill"></i>
-                                                    <i class="bi bi-star-fill"></i>
-                                                    <i class="bi bi-star-fill"></i>
-                                                    <i class="bi bi-star-fill"></i>
-                                                </div>
-                                            </div>
-                                            <span class="review-date">2 weeks ago</span>
-                                        </div>
-                                        <p class="review-text">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. The instructor explains complex concepts very clearly.</p>
-                                    </div>
 
-                                    <div class="review-item">
-                                        <div class="reviewer-info">
-                                            <img src="assets/img/person/person-m-5.webp" alt="Reviewer" class="reviewer-avatar">
-                                            <div class="reviewer-details">
-                                                <h6>David Thompson</h6>
-                                                <div class="review-rating">
-                                                    <i class="bi bi-star-fill"></i>
-                                                    <i class="bi bi-star-fill"></i>
-                                                    <i class="bi bi-star-fill"></i>
-                                                    <i class="bi bi-star-fill"></i>
-                                                    <i class="bi bi-star"></i>
+                                    @if (ViewBag.courseReview == null || ViewBag.courseReview.Count == 0)
+                                    {
+                                        <p>Chưa có đánh giá nào cho khóa học này.</p>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var r in ViewBag.courseReview)
+                                        {
+                                            <div class="review-item">
+                                                <div class="reviewer-info">
+                                                    <img src="@r.User.Avatar" class="reviewer-avatar" alt="Reviewer" />
+
+                                                    <div class="reviewer-details">
+                                                        <h6>@r.User.FullName</h6>
+
+                                                        <div class="review-rating">
+                                                            @for (int i = 1; i <= 5; i++)
+                                                            {
+                                                                if (i <= r.Rating)
+                                                                {
+                                                                    <i class="bi bi-star-fill"></i>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <i class="bi bi-star"></i>
+                                                                }
+                                                            }
+                                                        </div>
+                                                    </div>
+
+                                                    <span class="review-date">
+                                                        @r.CreatedAt.ToString("dd/MM/yyyy")
+                                                    </span>
                                                 </div>
+
+                                                <p class="review-text">@r.Comment</p>
                                             </div>
-                                            <span class="review-date">1 month ago</span>
-                                        </div>
-                                        <p class="review-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Great practical examples and real-world projects that helped me understand the concepts better.</p>
-                                    </div>
+                                        }
+                                    }
 
                                 </div>
+
 
                             </div><!-- End Reviews Tab -->
 
@@ -334,7 +283,13 @@
                             </div>
 
                             <div class="action-buttons">
-                                <button class="btn-primary">Enroll Now</button>
+                                <button id="btnEnroll" data-course="@Model.CourseId" class="btn-primary">
+                                    Enroll Now
+                                </button>
+
+                                <div id="notifyBox" class="alert d-none"></div>
+
+
                                 <button class="btn-secondary">Add to Wishlist</button>
                             </div>
 
@@ -404,3 +359,24 @@
     </section><!-- /Course Details Section -->
 
 </main>
+<script>
+    document.getElementById("btnEnroll").addEventListener("click", function () {
+        var courseId = this.getAttribute("data-course");
+
+        fetch("/Enrollment/Enroll?courseId=" + courseId, {
+            method: "POST"
+        })
+        .then(res => res.json())
+        .then(data => {
+            let box = document.getElementById("notifyBox");
+
+            box.classList.remove("d-none");
+            box.classList.add("alert-info");
+            box.innerText = data.message;
+
+            setTimeout(() => {
+                box.classList.add("d-none");
+            }, 2500);
+        });
+    });
+</script>

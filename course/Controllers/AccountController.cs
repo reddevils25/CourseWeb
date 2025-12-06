@@ -52,7 +52,7 @@ namespace course.Controllers
             HttpContext.Session.SetString("FullName", user.FullName);
             HttpContext.Session.SetString("Email", user.Email);
             HttpContext.Session.SetString("Role", user.Role);
-            HttpContext.Session.SetString("Avatar", user.Avatar ?? "/images/default-avatar.png");
+            HttpContext.Session.SetString("Avatar", user.Avatar ?? "/img/instructor/cat.png");
 
             // Redirect theo role
             return RedirectToRoleDashboard();
