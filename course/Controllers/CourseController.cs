@@ -63,6 +63,8 @@ namespace course.Controllers
             return View(course);
 
         }
+       
+        
         [Route("/Course/Learn/{id}")]
         public async Task<IActionResult> Learn(int id)
         {
@@ -99,9 +101,31 @@ namespace course.Controllers
 
             return View(course);
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string keyword, string sortOrder)
         {
-            return View();
+            var query = _context.Courses
+                .Include(c => c.Category)
+                .Include(c => c.Instructor).ThenInclude(i => i.User)
+                .Include(c => c.Lessons)
+                .Include(c => c.CourseReviews)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                query = query.Where(c => c.Title.Contains(keyword));
+            }
+
+            var courses = await query.ToListAsync();
+
+ 
+            ViewBag.Categories = await _context.CourseCategories.ToListAsync();
+
+            return View(courses);
         }
+
+
+
+
+
     }
 }

@@ -1,0 +1,77 @@
+﻿@model List<course.Models.Instructor>
+<main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title light-background">
+        <div class="container d-lg-flex justify-content-between align-items-center">
+            <h1 class="mb-2 mb-lg-0">Giảng viên</h1>
+            <nav class="breadcrumbs">
+                <ol>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li class="current">Giảng viên</li>
+                </ol>
+            </nav>
+        </div>
+    </div><!-- End Page Title -->
+    <!-- Instructors Section -->
+    <section id="instructors" class="instructors section">
+
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="row gy-4">
+
+              @foreach(var item in Model){
+                    <div class="col-xl-3 col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                        <div class="instructor-card">
+                            <div class="instructor-image">
+                                <img src="@item.User.Avatar" class="img-fluid" alt="">
+                                <div class="overlay-content">
+                                    <div class="rating-stars">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-half"></i>
+                                        <span>4.8</span>
+                                    </div>
+                                    <div class="course-count">
+                                        <i class="bi bi-play-circle"></i>
+                                        <span>@(item.Courses.Count) Courses</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="instructor-info">
+                                <h5>@item.User.FullName</h5>
+                                <p class="specialty">@item.MainSubject</p>
+                                <p class="description">@item.Bio</p>
+                                <div class="stats-grid">
+                                    <div class="stat">
+                                        <span class="number">2.1k</span>
+                                        <span class="label">Students</span>
+                                    </div>
+                                    <div class="stat">
+                                        <span class="number">4.8</span>
+                                        <span class="label">Rating</span>
+                                    </div>
+                                </div>
+                                <div class="action-buttons">
+                                    <a href="#" class="btn-view">View Profile</a>
+                                    <div class="social-links">
+                                        <a href="#"><i class="bi bi-linkedin"></i></a>
+                                        <a href="#"><i class="bi bi-twitter"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+              }
+               
+
+            </div>
+
+        </div>
+
+    </section><!-- /Instructors Section -->
+
+</main>

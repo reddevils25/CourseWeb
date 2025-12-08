@@ -1,0 +1,166 @@
+﻿@model (Blog Featured, List<Blog> Posts, int CurrentPage, int TotalPages)
+
+@{
+    ViewData["Title"] = "Blog";
+}
+<main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title light-background">
+        <div class="container d-lg-flex justify-content-between align-items-center">
+            <h1 class="mb-2 mb-lg-0">Blog</h1>
+            <nav class="breadcrumbs">
+                <ol>
+                    <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                    <li class="current">Blog</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Blog Hero Section -->
+    <section id="blog-hero" class="blog-hero section">
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="blog-grid">
+
+                <!-- Featured Post -->
+                @if (Model.Featured != null)
+                {
+
+                    <article class="blog-item featured" data-aos="fade-up">
+                        <img src="@Model.Featured.Thumbnail" alt="@Model.Featured.Title" class="img-fluid">
+                        <div class="blog-content">
+                            <div class="post-meta">
+                                <span class="date">@Model.Featured.CreatedAt</span>
+                                <span class="category">Featured</span>
+                            </div>
+                            <h2 class="post-title">
+                                <a asp-controller="Blog" asp-action="Details" asp-route-id="@Model.Featured.BlogId">
+                                    @Model.Featured.Title
+                                </a>
+                            </h2>
+                        </div>
+                    </article>
+                }
+
+                <!-- Regular Posts -->
+                @foreach (var item in Model.Posts)
+                {
+                    string sUrl = $"/blog/{item.Slug}-{item.BlogId}.html";
+                    <article class="blog-item" data-aos="fade-up">
+                        <img src="@item.Thumbnail" alt="@item.Title" class="img-fluid">
+
+                        <div class="blog-content">
+                            <div class="post-meta">
+                                <span class="date">@item.CreatedAt</span>
+                                <span class="category">News</span>
+                            </div>
+                            <h3 class="post-title">
+                                <a href="@sUrl">
+                                    @item.Title
+                                </a>
+                            </h3>
+                        </div>
+                    </article>
+                }
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Blog Posts Section -->
+    <section id="blog-posts" class="blog-posts section">
+
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+            <div class="row gy-4">
+
+                @foreach (var item in Model.Posts)
+                {
+                    string sUrl = $"/blog/{item.Slug}-{item.BlogId}.html";
+                    <div class="col-lg-4">
+                        <article class="position-relative h-100">
+
+                            <div class="post-img position-relative overflow-hidden">
+                                <img src="@item.Thumbnail" class="img-fluid" alt="">
+                            </div>
+
+                            <div class="meta d-flex align-items-end">
+                                <span class="post-date">
+                                    <span>@item.CreatedAt</span>
+                                    @item.CreatedAt
+                                </span>
+
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person"></i>
+                                    <span class="ps-2">Author</span>
+                                </div>
+
+                                <span class="px-3 text-black-50">/</span>
+
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-folder2"></i>
+                                    <span class="ps-2">General</span>
+                                </div>
+                            </div>
+
+                            <div class="post-content d-flex flex-column">
+                                <h3 class="post-title">@item.Title</h3>
+                                <a href="@sUrl"
+                                   class="readmore stretched-link">
+                                    <span>Read More</span>
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+
+                        </article>
+                    </div>
+                }
+
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Pagination -->
+    <section id="pagination-2" class="pagination-2 section">
+        <div class="container">
+            <nav class="d-flex justify-content-center" aria-label="Page navigation">
+                <ul>
+
+                    <!-- Previous -->
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <li>
+                            <a href="?page=@(Model.CurrentPage - 1)">
+                                <i class="bi bi-arrow-left"></i>
+                                <span class="d-none d-sm-inline">Previous</span>
+                            </a>
+                        </li>
+                    }
+
+                    <!-- Page Numbers -->
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li>
+                            <a href="?page=@i" class="@(Model.CurrentPage == i ? "active" : "")">@i</a>
+                        </li>
+                    }
+
+                    <!-- Next -->
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <li>
+                            <a href="?page=@(Model.CurrentPage + 1)">
+                                <span class="d-none d-sm-inline">Next</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </li>
+                    }
+
+                </ul>
+            </nav>
+        </div>
+    </section>
+
+</main>

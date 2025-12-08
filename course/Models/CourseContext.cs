@@ -86,6 +86,7 @@ public partial class CourseContext : DbContext
             entity.Property(e => e.Slug).HasMaxLength(200);
             entity.Property(e => e.Thumbnail).HasMaxLength(255);
             entity.Property(e => e.Title).HasMaxLength(200);
+            entity.Property(e => e.Subtitle).HasMaxLength(255);
 
             entity.HasOne(d => d.User).WithMany(p => p.Blogs)
                 .HasForeignKey(d => d.UserId)
@@ -221,6 +222,15 @@ public partial class CourseContext : DbContext
             entity.Property(e => e.Image).HasMaxLength(255);
             entity.Property(e => e.Location).HasMaxLength(200);
             entity.Property(e => e.Title).HasMaxLength(200);
+
+            entity.Property(e => e.TimeFrom).HasMaxLength(20);
+            entity.Property(e => e.TimeTo).HasMaxLength(20);
+            entity.Property(e => e.Price).HasColumnType("decimal(10,2)");
+
+            entity.HasOne(e => e.Instructor)
+                .WithMany(i => i.Events)     
+                .HasForeignKey(e => e.InstructorId)
+                .HasConstraintName("FK_Events_Instructors");
         });
 
         modelBuilder.Entity<Instructor>(entity =>
@@ -228,11 +238,10 @@ public partial class CourseContext : DbContext
             entity.HasKey(e => e.InstructorId).HasName("PK__Instruct__9D010A9B253B2C68");
 
             entity.Property(e => e.Experience).HasMaxLength(255);
-            entity.Property(e => e.Facebook).HasMaxLength(255);
-            entity.Property(e => e.LinkedIn).HasMaxLength(255);
             entity.Property(e => e.MainSubject).HasMaxLength(255);
             entity.Property(e => e.Website).HasMaxLength(255);
 
+            entity.Property(e => e.About).HasColumnType("nvarchar(max)");
             entity.HasOne(d => d.User).WithMany(p => p.Instructors)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

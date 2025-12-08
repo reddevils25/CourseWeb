@@ -1,0 +1,121 @@
+﻿@model course.Models.Contact
+@{
+    ViewData["Title"] = "Contact";
+}
+
+<main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title light-background">
+        <div class="container d-lg-flex justify-content-between align-items-center">
+            <h1 class="mb-2 mb-lg-0">Liên hệ</h1>
+            <nav class="breadcrumbs">
+                <ol>
+                    <li><a href="/Home">Trang chủ</a></li>
+                    <li class="current">Liên hệ</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <!-- End Page Title -->
+    <!-- Contact Section -->
+    <section id="contact" class="contact section">
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+            <div class="contact-main-wrapper">
+                <div class="map-wrapper">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3420.802583811332!2d105.69316507465537!3d18.659058464930418!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3139cddf0bf20f23%3A0x86154b56a284fa6d!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBWaW5o!5e1!3m2!1svi!2s!4v1765165768392!5m2!1svi!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+
+                <div class="contact-content">
+                    <div class="contact-cards-container" data-aos="fade-up" data-aos-delay="300">
+                        <div class="contact-card">
+                            <div class="icon-box">
+                                <i class="bi bi-geo-alt"></i>
+                            </div>
+                            <div class="contact-text">
+                                <h4>Vị trí</h4>
+                                <p>182 Lê Duẩn, Bến Thủy, Vinh, Nghệ An, Việt Nam</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="icon-box">
+                                <i class="bi bi-envelope"></i>
+                            </div>
+                            <div class="contact-text">
+                                <h4>Email</h4>
+                                <p>Nhom14@gmail.com</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="icon-box">
+                                <i class="bi bi-telephone"></i>
+                            </div>
+                            <div class="contact-text">
+                                <h4>Số điện thoại</h4>
+                                <p>+84 123456789</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="icon-box">
+                                <i class="bi bi-clock"></i>
+                            </div>
+                            <div class="contact-text">
+                                <h4>Giờ mở cửa</h4>
+                                <p>Thứ Hai - Thứ Sáu: 9 giờ sáng - 6 giờ chiều</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-form-container" data-aos="fade-up" data-aos-delay="400">
+                        <h3>Gửi liên hệ</h3>
+                        <p>Nếu bạn có thắc mắc, hãy điền thông tin dưới đây và gửi cho chúng tôi.</p>
+
+                 
+                        @if (ViewBag.Message != null)
+                        {
+                            <div class="alert alert-success">
+                                @ViewBag.Message
+                            </div>
+                        }
+
+                        <form asp-controller="Contact" asp-action="Send" method="post" >
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <input type="text" name="Name" class="form-control" id="name" placeholder="Họ tên" value="@Model?.Name" required>
+                                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-md-6 form-group mt-3 mt-md-0">
+                                    <input type="email" name="Email" class="form-control" id="email" placeholder="Email" value="@Model?.Email" required>
+                                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group mt-3">
+                                <input type="text" name="Subject" class="form-control" id="subject" placeholder="Subject" value="@Model?.Subject" required>
+                                @Html.ValidationMessageFor(m => m.Subject, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group mt-3">
+                                <textarea class="form-control" name="Message" rows="5" placeholder="Lời nhắn" required>@Model?.Message</textarea>
+                                @Html.ValidationMessageFor(m => m.Message, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="form-submit mt-3">
+                                <button type="submit">Gửi lời nhắn</button>
+                                <div class="social-links mt-2">
+                                    <a href="#"><i class="bi bi-twitter"></i></a>
+                                    <a href="#"><i class="bi bi-facebook"></i></a>
+                                    <a href="#"><i class="bi bi-instagram"></i></a>
+                                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section><!-- /Contact Section -->
+
+</main>

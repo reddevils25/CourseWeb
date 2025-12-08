@@ -248,13 +248,11 @@
 
                         <div class="card-header">
                             <div class="price-display">
-                                <span class="current-price">$149</span>
-                                <span class="original-price">$249</span>
-                                <span class="discount">40% OFF</span>
+                                <span class="current-price">@Model.Price $</span>
                             </div>
                             <div class="enrollment-count">
                                 <i class="bi bi-people"></i>
-                                <span>3,892 students enrolled</span>
+                                <span>@Model.EnrollCount Sinh viên đăng ký</span>
                             </div>
                         </div>
 
@@ -262,40 +260,48 @@
                             <div class="course-highlights">
                                 <div class="highlight-item">
                                     <i class="bi bi-trophy"></i>
-                                    <span>Certificate included</span>
+                                    @if (Model.HasCertificate == true)
+                                    {
+                                        <span>Có chứng chỉ</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Không có chứng chỉ</span>
+                                    }
+
                                 </div>
                                 <div class="highlight-item">
                                     <i class="bi bi-clock-history"></i>
-                                    <span>45 hours content</span>
+                                    <span>Nội dung 45 giờ</span>
                                 </div>
                                 <div class="highlight-item">
                                     <i class="bi bi-download"></i>
-                                    <span>Downloadable resources</span>
+                                    <span>Tài nguyên có thể tải xuống</span>
                                 </div>
                                 <div class="highlight-item">
                                     <i class="bi bi-infinity"></i>
-                                    <span>Lifetime access</span>
+                                    <span>Truy cập trọn đời</span>
                                 </div>
                                 <div class="highlight-item">
                                     <i class="bi bi-phone"></i>
-                                    <span>Mobile access</span>
+                                    <span>Truy cập di động</span>
                                 </div>
                             </div>
 
                             <div class="action-buttons">
                                 <button id="btnEnroll" data-course="@Model.CourseId" class="btn-primary">
-                                    Enroll Now
+                                    Đăng ký ngay
                                 </button>
 
                                 <div id="notifyBox" class="alert d-none"></div>
 
 
-                                <button class="btn-secondary">Add to Wishlist</button>
+                                <button class="btn-secondary">Thêm vào danh sách mong muốn</button>
                             </div>
 
                             <div class="guarantee">
                                 <i class="bi bi-shield-check"></i>
-                                <span>30-day money-back guarantee</span>
+                                <span>Đảm bảo hoàn tiền trong 30 ngày</span>
                             </div>
                         </div>
 

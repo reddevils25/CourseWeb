@@ -5,21 +5,20 @@
     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
         <div class="course-card">
             <div class="course-image">
-                <img src="~/img/education/students-9.webp" alt="Course" class="img-fluid">
-                <div class="badge featured">@item.IsFeatured</div>
+                <img src="@item.Thumbnail" alt="Course" class="img-fluid">
+                @if (item.IsFeatured)
+                {
+                    <div class="badge featured">Nổi bật</div>
+                }
+
                 <div class="price-badge">@item.Price $</div>
             </div>
             <div class="course-content">
                 <div class="course-meta">
                     @{
-                        var levelText = (item.Level ?? "").Trim() switch
-                        {
-                            "Beginner" => "Cơ bản",
-                            "Intermediate" => "Trung cấp",
-                            "Advanced" => "Nâng cao",
-                            _ => "Không xác định"
-                        };
+                        var levelText = item.Level ?? "Không xác định";
                     }
+
                     <span class="level">@levelText</span>
                     <span class="duration">8 Weeks</span>
                 </div>

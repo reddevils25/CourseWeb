@@ -1,0 +1,311 @@
+﻿@model course.Models.Instructor
+
+<main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title light-background">
+        <div class="container d-lg-flex justify-content-between align-items-center">
+            <h1 class="mb-2 mb-lg-0">Hồ sơ giảng viên</h1>
+            <nav class="breadcrumbs">
+                <ol>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li class="current">Hồ sơ giảng viên</li>
+                </ol>
+            </nav>
+        </div>
+    </div><!-- End Page Title -->
+    <!-- Instructor Profile Section -->
+    <section id="instructor-profile" class="instructor-profile section">
+
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="row">
+
+                <div class="col-lg-12">
+                    <div class="instructor-hero-banner" data-aos="zoom-out" data-aos-delay="200">
+                        <div class="hero-background">
+                            <img src="assets/img/education/showcase-4.webp" alt="Background" class="img-fluid">
+                            <div class="hero-overlay"></div>
+                        </div>
+                        <div class="hero-content">
+                            <div class="instructor-avatar">
+                                <img src="@Model.User.Avatar" alt="Instructor" class="img-fluid">
+                                <div class="status-badge">
+                                    <i class="bi bi-patch-check-fill"></i>
+                                    <span>Đã xác minh</span>
+                                </div>
+                            </div>
+                            <div class="instructor-info">
+                                <h2>@Model.User.FullName</h2>
+                                <p class="title">@Model.MainSubject</p>
+                                <div class="credentials">
+                                    <span class="credential">Ph.D. MIT</span>
+                                    <span class="credential">@Model.Experience</span>
+                                    <span class="credential">15,247 Sinh viên</span>
+                                </div>
+                                <div class="rating-overview">
+                                    <div class="stars">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-half"></i>
+                                    </div>
+                                    <span class="rating-text">4.9 rating from 3,821 reviews</span>
+                                </div>
+                                <div class="contact-actions">
+                                    <a href="#" class="btn-contact">
+                                        <i class="bi bi-envelope"></i>
+                                        Liên hệ giảng viên
+                                    </a>
+                                    <div class="social-media">
+                                        <a href="#"><i class="bi bi-linkedin"></i></a>
+                                        <a href="#"><i class="bi bi-twitter-x"></i></a>
+                                        <a href="#"><i class="bi bi-youtube"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row gy-5 mt-4">
+
+                <div class="col-lg-8">
+                    <div class="content-tabs" data-aos="fade-right" data-aos-delay="300">
+
+                        <ul class="nav nav-tabs custom-tabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#instructor-profile-about" type="button" role="tab">
+                                    <i class="bi bi-person"></i>
+                                    About
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#instructor-profile-experience" type="button" role="tab">
+                                    <i class="bi bi-briefcase"></i>
+                                    Kinh nghiệm
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#instructor-profile-courses" type="button" role="tab">
+                                    <i class="bi bi-book"></i>
+                                    Khóa học
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#instructor-profile-reviews" type="button" role="tab">
+                                    <i class="bi bi-star"></i>
+                                    Đánh giá
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content custom-tab-content">
+
+                            @Html.Raw(Model.About)
+
+                            <div class="tab-pane fade" id="instructor-profile-experience" role="tabpanel">
+                                <div class="experience-grid">
+                                    <div class="experience-card">
+                                        <div class="timeline-marker">2019</div>
+                                        <div class="experience-details">
+                                            <h5>Lead AI Researcher</h5>
+                                            <p class="institution">TechForward Institute</p>
+                                            <p>Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="experience-card">
+                                        <div class="timeline-marker">2016</div>
+                                        <div class="experience-details">
+                                            <h5>Senior Data Scientist</h5>
+                                            <p class="institution">InnovateLabs Corp</p>
+                                            <p>Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="experience-card">
+                                        <div class="timeline-marker">2014</div>
+                                        <div class="experience-details">
+                                            <h5>Research Fellow</h5>
+                                            <p class="institution">MIT Computer Science Lab</p>
+                                            <p>Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="instructor-profile-courses" role="tabpanel">
+                                <div class="courses-grid">
+                                    @foreach (var course in Model.Courses)
+                                    {
+                                        <div class="course-item">
+                                            <div class="course-thumb">
+                                                <img src="@course.Thumbnail" alt="Course" class="img-fluid">
+                                                <div class="course-level">@course.Level</div>
+                                            </div>
+                                            <div class="course-info">
+                                                <h5>@course.Title</h5>
+                                                <div class="course-stats">
+                                                    <span><i class="bi bi-people"></i> @course.EnrollCount enrolled</span>
+                                                    <span><i class="bi bi-star-fill"></i> @course.Rating</span>
+                                                </div>
+                                                <p class="price">$@course.Price</p>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+
+                            <div class="tab-pane fade" id="instructor-profile-reviews" role="tabpanel">
+                                <div class="reviews-container">
+                                    <div class="review-card">
+                                        <div class="review-header">
+                                            <img src="assets/img/person/person-f-12.webp" alt="Student" class="reviewer-avatar">
+                                            <div class="reviewer-info">
+                                                <h6>Sarah Williams</h6>
+                                                <p>Data Scientist at Amazon</p>
+                                                <div class="review-rating">
+                                                    <i class="bi bi-star-fill"></i>
+                                                    <i class="bi bi-star-fill"></i>
+                                                    <i class="bi bi-star-fill"></i>
+                                                    <i class="bi bi-star-fill"></i>
+                                                    <i class="bi bi-star-fill"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p>"Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollitia animi. The hands-on approach and real-world projects made all the difference."</p>
+                                    </div>
+
+                                    <div class="review-card">
+                                        <div class="review-header">
+                                            <img src="assets/img/person/person-m-8.webp" alt="Student" class="reviewer-avatar">
+                                            <div class="reviewer-info">
+                                                <h6>David Martinez</h6>
+                                                <p>ML Engineer at Tesla</p>
+                                                <div class="review-rating">
+                                                    <i class="bi bi-star-fill"></i>
+                                                    <i class="bi bi-star-fill"></i>
+                                                    <i class="bi bi-star-fill"></i>
+                                                    <i class="bi bi-star-fill"></i>
+                                                    <i class="bi bi-star-fill"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p>"Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur. Professor Chen's expertise is unmatched."</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="sidebar-widgets" data-aos="fade-left" data-aos-delay="300">
+
+                        <div class="stats-widget">
+                            <h4>Teaching Impact</h4>
+                            <div class="stats-grid">
+                                <div class="stat-box">
+                                    <div class="stat-icon">
+                                        <i class="bi bi-people"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h5>15,247</h5>
+                                        <p>Total Students</p>
+                                    </div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-icon">
+                                        <i class="bi bi-book"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h5>18</h5>
+                                        <p>Active Courses</p>
+                                    </div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-icon">
+                                        <i class="bi bi-award"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h5>94%</h5>
+                                        <p>Completion Rate</p>
+                                    </div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-icon">
+                                        <i class="bi bi-clock"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h5>10+</h5>
+                                        <p>Years Teaching</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="achievements-widget">
+                            <h4>Recognition &amp; Awards</h4>
+                            <div class="achievement-list">
+                                <div class="achievement-item">
+                                    <i class="bi bi-trophy"></i>
+                                    <div class="achievement-text">
+                                        <h6>Excellence in Teaching Award</h6>
+                                        <p>MIT Computer Science Department • 2022</p>
+                                    </div>
+                                </div>
+                                <div class="achievement-item">
+                                    <i class="bi bi-patch-check"></i>
+                                    <div class="achievement-text">
+                                        <h6>AI Research Grant</h6>
+                                        <p>National Science Foundation • 2021</p>
+                                    </div>
+                                </div>
+                                <div class="achievement-item">
+                                    <i class="bi bi-mortarboard"></i>
+                                    <div class="achievement-text">
+                                        <h6>Outstanding Educator Recognition</h6>
+                                        <p>IEEE Computer Society • 2020</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="contact-widget">
+                            <h4>Get in Touch</h4>
+                            <div class="contact-info">
+                                <div class="contact-item">
+                                    <i class="bi bi-envelope"></i>
+                                    <span>alexandra.chen@university.edu</span>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="bi bi-telephone"></i>
+                                    <span>+1 (555) 789-0123</span>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="bi bi-geo-alt"></i>
+                                    <span>Room 304, Computer Science Building</span>
+                                </div>
+                            </div>
+                            <div class="office-hours">
+                                <h6>Office Hours</h6>
+                                <p>Tuesday &amp; Thursday<br>2:00 PM - 4:00 PM</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section><!-- /Instructor Profile Section -->
+
+</main>

@@ -55,7 +55,6 @@ namespace course.Controllers
                 return NotFound();
             }
 
-            // Lấy danh sách khóa học đã đăng ký
             var enrollments = await _context.Enrollments
                 .Include(e => e.Course)
                     .ThenInclude(c => c.Instructor)
@@ -73,7 +72,7 @@ namespace course.Controllers
 
         }
 
-        // GET: Profile/InstructorProfile - Trang duy nhất cho instructor
+        // GET: Profile/InstructorProfile 
         public async Task<IActionResult> InstructorProfile()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -95,7 +94,6 @@ namespace course.Controllers
                 return NotFound();
             }
 
-            // Thống kê
             ViewBag.TotalCourses = instructor.Courses.Count;
             ViewBag.TotalStudents = instructor.Courses.Sum(c => c.Enrollments.Count);
             ViewBag.TotalRevenue = instructor.Courses
@@ -104,7 +102,6 @@ namespace course.Controllers
                 .Sum(e => e.Amount);
             ViewBag.TotalLessons = instructor.Courses.Sum(c => c.Lessons.Count);
 
-            // Danh sách khóa học với lessons
             var courses = await _context.Courses
                 .Include(c => c.Enrollments)
                 .Include(c => c.Lessons)
@@ -122,7 +119,7 @@ namespace course.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateProfile(string fullName, string email, string bio,
-            string experience, string facebook, string linkedin, string website, string mainSubject)
+            string experience, string website, string mainSubject)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (!userId.HasValue)
@@ -139,7 +136,6 @@ namespace course.Controllers
             user.FullName = fullName;
             user.Email = email;
 
-            // Nếu là instructor, cập nhật thêm thông tin
             if (user.Role == "Instructor")
             {
                 var instructor = await _context.Instructors
@@ -149,8 +145,6 @@ namespace course.Controllers
                 {
                     instructor.Bio = bio ?? "";
                     instructor.Experience = experience ?? "";
-                    instructor.Facebook = facebook ?? "";
-                    instructor.LinkedIn = linkedin ?? "";
                     instructor.Website = website ?? "";
                     instructor.MainSubject = mainSubject ?? "";
                 }
@@ -251,13 +245,12 @@ namespace course.Controllers
                 return Json(new { success = false, message = "Không tìm thấy khóa học hoặc không có quyền xóa" });
             }
 
-            // Xóa lessons trước
             _context.Lessons.RemoveRange(course.Lessons);
 
-            // Xóa enrollments
+
             _context.Enrollments.RemoveRange(course.Enrollments);
 
-            // Xóa course
+
             _context.Courses.Remove(course);
 
             await _context.SaveChangesAsync();
@@ -265,7 +258,6 @@ namespace course.Controllers
             return Json(new { success = true, message = "Xóa khóa học thành công!" });
         }
 
-        // Helper: Hash Password
         private string HashPassword(string password)
         {
             using var sha256 = SHA256.Create();

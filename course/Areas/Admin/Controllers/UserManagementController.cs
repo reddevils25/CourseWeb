@@ -101,8 +101,6 @@ namespace course.Areas.Admin.Controllers
                     UserId = user.UserId,
                     Bio = "",
                     Experience = "",
-                    Facebook = "",
-                    LinkedIn = "",
                     Website = "",
                     MainSubject = ""
                 };
@@ -166,8 +164,6 @@ namespace course.Areas.Admin.Controllers
                 UserId = id,
                 Bio = "",
                 Experience = "",
-                Facebook = "",
-                LinkedIn = "",
                 Website = "",
                 MainSubject = ""
             };

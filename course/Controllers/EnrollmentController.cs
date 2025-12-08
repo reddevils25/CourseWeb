@@ -11,6 +11,11 @@ public class EnrollmentController : Controller
         _context = context;
     }
 
+    public IActionResult Index()
+    {
+        return View();
+    }
+
     [HttpPost]
     public IActionResult Enroll(int courseId)
     {

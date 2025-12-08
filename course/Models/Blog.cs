@@ -11,6 +11,8 @@ public partial class Blog
 
     public string Title { get; set; } = null!;
 
+    public string? Subtitle { get; set; }
+
     public string? Slug { get; set; }
 
     public string? Content { get; set; }

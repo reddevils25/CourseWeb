@@ -12,17 +12,16 @@ public partial class Instructor
 
     public string? Bio { get; set; }
 
+    public string? About { get; set; }
     public string? Experience { get; set; }
-
-    public string? Facebook { get; set; }
-
-    public string? LinkedIn { get; set; }
 
     public string? Website { get; set; }
 
     public string? MainSubject { get; set; }
 
     public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
+    public virtual ICollection<Event> Events { get; set; } = new List<Event>();
+
 
     [ValidateNever]
     public virtual User User { get; set; } = null!;

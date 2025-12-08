@@ -109,8 +109,6 @@ namespace course.Controllers
                     UserId = user.UserId,
                     Bio = "",
                     Experience = "",
-                    Facebook = "",
-                    LinkedIn = "",
                     Website = "",
                     MainSubject = ""
                 };

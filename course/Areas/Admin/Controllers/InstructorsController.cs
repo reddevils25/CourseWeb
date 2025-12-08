@@ -41,7 +41,7 @@ namespace course.Areas.Admin.Controllers
        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string FullName, string Email, string Password, string MainSubject, string Experience, string Bio, string Facebook, string LinkedIn, string Website)
+        public async Task<IActionResult> Create(string FullName, string Email, string Password, string MainSubject, string Experience, string Bio, string Website)
         {
             if (string.IsNullOrEmpty(FullName) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
             {
@@ -77,8 +77,6 @@ namespace course.Areas.Admin.Controllers
                 MainSubject = MainSubject,
                 Experience = Experience,
                 Bio = Bio,
-                Facebook = Facebook,
-                LinkedIn = LinkedIn,
                 Website = Website
             };
 
@@ -125,9 +123,7 @@ namespace course.Areas.Admin.Controllers
 
                
                 existingInstructor.Bio = instructor.Bio;
-                existingInstructor.Experience = instructor.Experience;
-                existingInstructor.Facebook = instructor.Facebook;
-                existingInstructor.LinkedIn = instructor.LinkedIn;
+                existingInstructor.Experience = instructor.Experience;           
                 existingInstructor.Website = instructor.Website;
                 existingInstructor.MainSubject = instructor.MainSubject;
 

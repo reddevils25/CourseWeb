@@ -1,19 +1,21 @@
 ﻿@model IEnumerable<course.Models.Blog>
 
 @foreach(var item in Model.Take(3)){
+    string sUrl = $"/blog/{item.Slug}-{item.BlogId}.html";
+
     <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
         <div class="card">
             <div class="card-top d-flex align-items-center">
-                <img src="~/img/person/person-f-12.webp" alt="Author" class="rounded-circle me-2">
+                <img src="@item.User.Avatar" alt="Author" class="rounded-circle me-2">
                 <span class="author-name">Bởi @item.User.FullName</span>
                 <span class="ms-auto likes"><i class="bi bi-heart"></i> 65</span>
             </div>
             <div class="card-img-wrapper">
-                <img src="~/img/blog/blog-post-1.webp" alt="Post Image">
+                <img src="@item.Thumbnail" alt="Post Image">
             </div>
             <div class="card-body">
-                <h5 class="card-title"><a href="blog-details.html">@item.Title</a></h5>
-                <p class="card-text">@item.Content</p>
+                <h5 class="card-title"><a href="@sUrl">@item.Title</a></h5>
+                <p class="card-text">@item.Subtitle</p>
             </div>
         </div>
     </div>
