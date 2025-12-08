@@ -54,43 +54,55 @@ namespace course.Areas.Admin.Controllers
             return View();
         }
 
-        // POST: Admin/Students/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string FullName, string Username, string Password,
      [Bind("DateOfBirth,Gender,Address,Phone,EnrollmentDate")] Student student)
         {
-            var newUser = new User
+            try
             {
-                FullName = FullName,
-                Email = Username,
-                PasswordHash = Password,
-                Role = "Student",
-                CreatedAt = DateTime.Now
-            };
+          
+                if (_context.Users.Any(u => u.Email == Username))
+                {
+                    TempData["Error"] = "Email đã tồn tại!";
+                    ModelState.AddModelError("Username", "Email này đã được dùng.");
+                    return View(student); 
+                }
 
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
+                var newUser = new User
+                {
+                    FullName = FullName,
+                    Email = Username,
+                    PasswordHash = Password,
+                    Role = "Student",
+                    CreatedAt = DateTime.Now
+                };
 
-            student.UserId = newUser.UserId;
+                _context.Users.Add(newUser);
+                await _context.SaveChangesAsync();
 
-            var lastStudent = await _context.Students
-                .OrderByDescending(s => s.StudentId)
-                .FirstOrDefaultAsync();
+                student.UserId = newUser.UserId;
 
-            int nextId = (lastStudent != null) ? lastStudent.StudentId + 1 : 1;
-            student.StudentCode = $"SV{DateTime.Now.Year}{nextId:D4}";
+                var lastStudent = await _context.Students
+                    .OrderByDescending(s => s.StudentId)
+                    .FirstOrDefaultAsync();
 
-            _context.Students.Add(student);
-            await _context.SaveChangesAsync();
+                int nextId = (lastStudent != null) ? lastStudent.StudentId + 1 : 1;
+                student.StudentCode = $"SV{DateTime.Now.Year}{nextId:D4}";
 
-            return RedirectToAction(nameof(Index));
+                _context.Students.Add(student);
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Thêm sinh viên thành công!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Có lỗi xảy ra khi thêm sinh viên: " + ex.Message;
+                return View(student);
+            }
         }
 
-        // GET: Admin/Students/Edit/5
-        // GET: Admin/Students/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -110,10 +122,6 @@ namespace course.Areas.Admin.Controllers
             return View(student);
         }
 
-
-        // POST: Admin/Students/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Student student)
@@ -121,57 +129,53 @@ namespace course.Areas.Admin.Controllers
             if (id != student.StudentId)
                 return NotFound();
 
-            if (ModelState.IsValid)
+            try
             {
-                try
+                var existingStudent = await _context.Students
+                    .Include(s => s.User)
+                    .FirstOrDefaultAsync(s => s.StudentId == id);
+
+                if (existingStudent == null)
+                    return NotFound();
+
+                // Kiểm tra email trùng với user khác
+                if (_context.Users.Any(u => u.Email == student.User.Email && u.UserId != student.UserId))
                 {
-                    
-                    var existingStudent = await _context.Students
-                        .Include(s => s.User)
-                        .FirstOrDefaultAsync(s => s.StudentId == id);
+                    TempData["Error"] = "Email đã được người khác sử dụng!";
+                    ModelState.AddModelError("User.Email", "Email này đã tồn tại.");
+                    return View(student);
+                }
 
-                    if (existingStudent == null)
-                        return NotFound();
+                existingStudent.DateOfBirth = student.DateOfBirth;
+                existingStudent.Gender = student.Gender;
+                existingStudent.Address = student.Address;
+                existingStudent.Phone = student.Phone;
+                existingStudent.EnrollmentDate = student.EnrollmentDate;
+                existingStudent.StudentCode = student.StudentCode;
 
-          
-                    existingStudent.DateOfBirth = student.DateOfBirth;
-                    existingStudent.Gender = student.Gender;
-                    existingStudent.Address = student.Address;
-                    existingStudent.Phone = student.Phone;
-                    existingStudent.EnrollmentDate = student.EnrollmentDate;
-                    existingStudent.StudentCode = student.StudentCode;
+                if (existingStudent.User != null)
+                {
+                    existingStudent.User.FullName = student.User.FullName;
+                    existingStudent.User.Email = student.User.Email;
 
-                
-                    if (existingStudent.User != null)
+                    if (!string.IsNullOrWhiteSpace(student.User.PasswordHash))
                     {
-                        existingStudent.User.FullName = student.User.FullName;
-                        existingStudent.User.Email = student.User.Email;
-
-                        if (!string.IsNullOrWhiteSpace(student.User.PasswordHash))
-                        {
-                            existingStudent.User.PasswordHash = student.User.PasswordHash; 
-                        }
+                        existingStudent.User.PasswordHash = student.User.PasswordHash;
                     }
-
-                  
-                    await _context.SaveChangesAsync();
-
-                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.Students.Any(e => e.StudentId == student.StudentId))
-                        return NotFound();
-                    else
-                        throw;
-                }
+
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Cập nhật sinh viên thành công!";
+                return RedirectToAction(nameof(Index));
             }
-
-            return View(student);
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Có lỗi xảy ra khi cập nhật: " + ex.Message;
+                return View(student);
+            }
         }
 
-        // GET: Admin/Students/Delete/5
-        // GET: Admin/Students/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -187,29 +191,36 @@ namespace course.Areas.Admin.Controllers
             return View(student);
         }
 
-
-        // POST: Admin/Students/Delete/5
-        // POST: Admin/Students/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var student = await _context.Students
-                .Include(s => s.User)
-                .FirstOrDefaultAsync(s => s.StudentId == id);
-
-            if (student != null)
+            try
             {
-                // 1️⃣ Xóa Student trước
+                var student = await _context.Students
+                    .Include(s => s.User)
+                    .FirstOrDefaultAsync(s => s.StudentId == id);
+
+                if (student == null)
+                {
+                    TempData["Error"] = "Không tìm thấy sinh viên để xóa!";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 _context.Students.Remove(student);
                 await _context.SaveChangesAsync();
 
-                // 2️⃣ Sau đó, nếu User tồn tại thì xóa luôn User (nếu bạn muốn)
                 if (student.User != null)
                 {
                     _context.Users.Remove(student.User);
                     await _context.SaveChangesAsync();
                 }
+
+                TempData["Success"] = "Xóa sinh viên thành công!";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Có lỗi xảy ra khi xóa: " + ex.Message;
             }
 
             return RedirectToAction(nameof(Index));
