@@ -43,47 +43,56 @@ namespace course.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string FullName, string Email, string Password, string MainSubject, string Experience, string Bio, string Website)
         {
-            if (string.IsNullOrEmpty(FullName) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
+            try
             {
-                ModelState.AddModelError("", "Vui lòng nhập đầy đủ họ tên, email và mật khẩu.");
-                return View();
+                if (string.IsNullOrEmpty(FullName) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password))
+                {
+                    ModelState.AddModelError("", "Vui lòng nhập đầy đủ họ tên, email và mật khẩu.");
+                    return View();
+                }
+
+
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == Email);
+                if (existingUser != null)
+                {
+                    ModelState.AddModelError("", "Email này đã được sử dụng.");
+                    return View();
+                }
+
+
+                var user = new User
+                {
+                    FullName = FullName,
+                    Email = Email,
+                    PasswordHash = Password,
+                    Role = "Instructor",
+                    CreatedAt = DateTime.Now
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+
+                var instructor = new Instructor
+                {
+                    UserId = user.UserId,
+                    MainSubject = MainSubject,
+                    Experience = Experience,
+                    Bio = Bio,
+                    Website = Website
+                };
+
+                _context.Instructors.Add(instructor);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = "Thêm giảng viên thành công!";
+                return RedirectToAction(nameof(Index));
+             
             }
-
-         
-            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == Email);
-            if (existingUser != null)
+            catch (Exception ex)
             {
-                ModelState.AddModelError("", "Email này đã được sử dụng.");
-                return View();
+                TempData["Error"] = "Đã xảy ra lỗi khi tạo giảng viên!";
+                return RedirectToAction(nameof(Create));
             }
-
-            
-            var user = new User
-            {
-                FullName = FullName,
-                Email = Email,
-                PasswordHash = Password, 
-                Role = "Instructor",
-                CreatedAt = DateTime.Now
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            
-            var instructor = new Instructor
-            {
-                UserId = user.UserId,
-                MainSubject = MainSubject,
-                Experience = Experience,
-                Bio = Bio,
-                Website = Website
-            };
-
-            _context.Instructors.Add(instructor);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
         }
         // GET: Admin/Instructors/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -112,7 +121,13 @@ namespace course.Areas.Admin.Controllers
             if (id != instructor.InstructorId)
                 return NotFound();
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                ViewData["UserId"] = new SelectList(_context.Users, "UserId", "FullName", instructor.UserId);
+                return View(instructor);
+            }
+
+            try
             {
                 var existingInstructor = await _context.Instructors
                     .Include(i => i.User)
@@ -121,13 +136,11 @@ namespace course.Areas.Admin.Controllers
                 if (existingInstructor == null)
                     return NotFound();
 
-               
                 existingInstructor.Bio = instructor.Bio;
-                existingInstructor.Experience = instructor.Experience;           
+                existingInstructor.Experience = instructor.Experience;
                 existingInstructor.Website = instructor.Website;
                 existingInstructor.MainSubject = instructor.MainSubject;
 
-               
                 if (existingInstructor.User != null)
                 {
                     var userToUpdate = await _context.Users.FindAsync(existingInstructor.UserId);
@@ -143,12 +156,16 @@ namespace course.Areas.Admin.Controllers
                 }
 
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Cập nhật giảng viên thành công!";
                 return RedirectToAction(nameof(Index));
             }
-
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "FullName", instructor.UserId);
-            return View(instructor);
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Có lỗi xảy ra khi cập nhật giảng viên!";
+                return RedirectToAction(nameof(Edit), new { id });
+            }
         }
+
 
         // GET: Admin/Instructors/Delete/5
         // GET: Admin/Instructors/Delete/5
@@ -173,22 +190,32 @@ namespace course.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var instructor = await _context.Instructors
-                .Include(i => i.User)
-                .FirstOrDefaultAsync(i => i.InstructorId == id);
-
-            if (instructor != null)
+            try
             {
-               
+                var instructor = await _context.Instructors
+                    .Include(i => i.User)
+                    .FirstOrDefaultAsync(i => i.InstructorId == id);
+
+                if (instructor == null)
+                {
+                    TempData["Error"] = "Không tìm thấy giảng viên cần xóa!";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 _context.Instructors.Remove(instructor);
                 await _context.SaveChangesAsync();
 
-                
                 if (instructor.User != null)
                 {
                     _context.Users.Remove(instructor.User);
                     await _context.SaveChangesAsync();
                 }
+
+                TempData["Success"] = "Xóa giảng viên thành công!";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Có lỗi xảy ra khi xóa giảng viên!";
             }
 
             return RedirectToAction(nameof(Index));
