@@ -24,11 +24,11 @@ namespace course.Areas.Admin.Controllers
         // GET: Admin/Courses
         public async Task<IActionResult> Index()
         {
-            // Load Instructor để hiển thị tên giảng viên
+           
             var courses = await _context.Courses
                 .Include(c => c.Instructor)
                     .ThenInclude(i => i.User)
-                .Include(c => c.Category) // nếu muốn hiển thị danh mục
+                .Include(c => c.Category)
                 .ToListAsync();
 
             return View(courses);
@@ -86,39 +86,44 @@ namespace course.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("InstructorId,Title,Description,Price,Thumbnail,Level,IsFeatured,IsNew,HasCertificate,CategoryId,Alias,Rating")] Course course)
         {
-           
-            if (string.IsNullOrEmpty(course.Alias) && !string.IsNullOrEmpty(course.Title))
+            try
             {
-                course.Alias = course.Title.ToLower().Replace(" ", "-");
+                if (string.IsNullOrEmpty(course.Alias) && !string.IsNullOrEmpty(course.Title))
+                {
+                    course.Alias = course.Title.ToLower().Replace(" ", "-");
+                }
+
+                ModelState.Remove("Instructor");
+                ModelState.Remove("Category");
+                ModelState.Remove("CourseReviews");
+                ModelState.Remove("Enrollments");
+                ModelState.Remove("Lessons");
+
+                if (ModelState.IsValid)
+                {
+                    course.CreatedAt = DateTime.Now;
+                    course.EnrollCount = 0;
+
+                    _context.Add(course);
+                    await _context.SaveChangesAsync();
+
+                    TempData["Success"] = "Thêm khóa học thành công!";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "Có lỗi xảy ra khi thêm khóa học!";
             }
 
-           
-            ModelState.Remove("Instructor");
-            ModelState.Remove("Category");
-            ModelState.Remove("CourseReviews");
-            ModelState.Remove("Enrollments");
-            ModelState.Remove("Lessons");
-
-            if (ModelState.IsValid)
-            {
-                course.CreatedAt = DateTime.Now;
-                course.EnrollCount = 0;
-
-                _context.Add(course);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
-            }
-
-           
+            // Load lại dropdown khi lỗi
             ViewData["InstructorId"] = new SelectList(
-                _context.Instructors
-                    .Include(i => i.User)
-                    .Select(i => new {
-                        InstructorId = i.InstructorId,
-                        FullName = i.User.FullName
-                    })
-                    .ToList(),
+                _context.Instructors.Include(i => i.User)
+                .Select(i => new {
+                    InstructorId = i.InstructorId,
+                    FullName = i.User.FullName
+                })
+                .ToList(),
                 "InstructorId",
                 "FullName",
                 course.InstructorId
@@ -127,11 +132,11 @@ namespace course.Areas.Admin.Controllers
             ViewData["CategoryId"] = new SelectList(_context.CourseCategories, "CategoryId", "Name", course.CategoryId);
 
             ViewData["LevelList"] = new List<SelectListItem>
-{
-    new SelectListItem { Value = "Beginner", Text = "Cơ bản" },
-    new SelectListItem { Value = "Intermediate", Text = "Trung cấp" },
-    new SelectListItem { Value = "Advanced", Text = "Nâng cao" }
-};
+    {
+        new SelectListItem { Value = "Beginner", Text = "Cơ bản" },
+        new SelectListItem { Value = "Intermediate", Text = "Trung cấp" },
+        new SelectListItem { Value = "Advanced", Text = "Nâng cao" }
+    };
 
             return View(course);
         }
@@ -169,10 +174,6 @@ namespace course.Areas.Admin.Controllers
             return View(course);
         }
 
-
-        // POST: Admin/Courses/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CourseId,InstructorId,Title,Description,Price,Thumbnail,Level,IsFeatured,IsNew,HasCertificate,Rating,CategoryId,Alias")] Course course)
@@ -256,11 +257,23 @@ namespace course.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var course = await _context.Courses.FindAsync(id);
-            if (course != null)
+            try
             {
+                var course = await _context.Courses.FindAsync(id);
+                if (course == null)
+                {
+                    TempData["Error"] = "Không tìm thấy khóa học để xóa!";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 _context.Courses.Remove(course);
                 await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Xóa khóa học thành công!";
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "Có lỗi xảy ra khi xóa khóa học!";
             }
 
             return RedirectToAction(nameof(Index));
