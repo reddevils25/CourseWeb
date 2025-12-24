@@ -60,7 +60,7 @@
         }
 </style>
 
-<div class="content" style="margin-left:47px;width: 92%;">
+<div class="content" style="margin-left: 188px;width: 83%;">
     <div class="container-fluid pt-4 px-4" style="width:105%; padding-bottom:100px;">
 
         <!-- TITLE -->
@@ -69,7 +69,6 @@
             <small class="text-muted">Cập nhật: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</small>
         </div>
 
-        <!-- ========== BỘ LỌC MỞ RỘNG ========== -->
         @* <div class="filter-card"> *@
         @*     <form method="get" class="text-white"> *@
 
@@ -77,24 +76,29 @@
         @*         <div class="filter-section"> *@
         @*             <h6>⏰ Khoảng Thời gian</h6> *@
         @*             <div class="row g-3"> *@
+
         @*                 <div class="col-md-3"> *@
         @*                     <label class="form-label">Chọn khoảng</label> *@
         @*                     <select name="timeRange" class="form-select" onchange="toggleCustomDate(this.value)"> *@
-        @*                         <option value="all" selected="@(ViewBag.TimeRange == "all" ? "selected" : null)">Tất cả</option> *@
-        @*                         <option value="today" selected="@(ViewBag.TimeRange == "today" ? "selected" : null)">Hôm nay</option> *@
-        @*                         <option value="week" selected="@(ViewBag.TimeRange == "week" ? "selected" : null)">7 ngày qua</option> *@
-        @*                         <option value="month" selected="@(ViewBag.TimeRange == "month" ? "selected" : null)">30 ngày qua</option> *@
-        @*                         <option value="year" selected="@(ViewBag.TimeRange == "year" ? "selected" : null)">Năm qua</option> *@
-        @*                         <option value="custom" selected="@(ViewBag.TimeRange == "custom" ? "selected" : null)">Tùy chỉnh</option> *@
+        @*                         <option value="all" selected="@(ViewBag.TimeRange == "all")">Tất cả</option> *@
+        @*                         <option value="today" selected="@(ViewBag.TimeRange == "today")">Hôm nay</option> *@
+        @*                         <option value="week" selected="@(ViewBag.TimeRange == "week")">7 ngày qua</option> *@
+        @*                         <option value="month" selected="@(ViewBag.TimeRange == "month")">30 ngày qua</option> *@
+        @*                         <option value="year" selected="@(ViewBag.TimeRange == "year")">Năm qua</option> *@
+        @*                         <option value="custom" selected="@(ViewBag.TimeRange == "custom")">Tùy chỉnh</option> *@
         @*                     </select> *@
         @*                 </div> *@
-        @*                 <div class="col-md-3" id="startDateDiv" style="display: @(ViewBag.TimeRange == "custom" ? "block" : "none")"> *@
+
+        @*                 <div class="col-md-3" id="startDateDiv" *@
+        @*                      style="display:@(ViewBag.TimeRange == "custom" ? "block" : "none")"> *@
         @*                     <label class="form-label">Từ ngày</label> *@
-        @*                     <input type="date" name="startDate" class="form-control" value="@ViewBag.StartDate"> *@
+        @*                     <input type="date" name="startDate" class="form-control" value="@ViewBag.StartDate" /> *@
         @*                 </div> *@
-        @*                 <div class="col-md-3" id="endDateDiv" style="display: @(ViewBag.TimeRange == "custom" ? "block" : "none")"> *@
+
+        @*                 <div class="col-md-3" id="endDateDiv" *@
+        @*                      style="display:@(ViewBag.TimeRange == "custom" ? "block" : "none")"> *@
         @*                     <label class="form-label">Đến ngày</label> *@
-        @*                     <input type="date" name="endDate" class="form-control" value="@ViewBag.EndDate"> *@
+        @*                     <input type="date" name="endDate" class="form-control" value="@ViewBag.EndDate" /> *@
         @*                 </div> *@
         @*             </div> *@
         @*         </div> *@
@@ -103,68 +107,86 @@
         @*         <div class="filter-section"> *@
         @*             <h6>📚 Lọc theo Khóa học</h6> *@
         @*             <div class="row g-3"> *@
+
+        @*                 <!-- Danh mục --> *@
         @*                 <div class="col-md-3"> *@
         @*                     <label class="form-label">Danh mục</label> *@
         @*                     <select name="categoryId" class="form-select"> *@
         @*                         <option value="">Tất cả danh mục</option> *@
         @*                         @foreach (var cat in ViewBag.Categories) *@
         @*                         { *@
-        @*                             <option value="@cat.CategoryId" selected="@(ViewBag.SelectedCategory == cat.CategoryId ? "selected" : null)"> *@
+        @*                             <option value="@cat.CategoryId" *@
+        @*                                     selected="@(ViewBag.SelectedCategory == cat.CategoryId)"> *@
         @*                                 @cat.Name *@
         @*                             </option> *@
         @*                         } *@
         @*                     </select> *@
         @*                 </div> *@
+
+        @*                 <!-- Cấp độ --> *@
         @*                 <div class="col-md-3"> *@
         @*                     <label class="form-label">Cấp độ</label> *@
         @*                     <select name="level" class="form-select"> *@
         @*                         <option value="">Tất cả cấp độ</option> *@
         @*                         @foreach (var lv in ViewBag.Levels) *@
         @*                         { *@
-        @*                             <option value="@lv" selected="@(ViewBag.SelectedLevel == lv ? "selected" : null)"> *@
-        @*                                 @(lv == "Beginner" ? "Cơ bản" : lv == "Intermediate" ? "Trung cấp" : "Nâng cao") *@
+        @*                             <option value="@lv" *@
+        @*                                     selected="@(ViewBag.SelectedLevel == lv)"> *@
+        @*                                 @(lv == "Beginner" ? "Cơ bản" *@
+        @*                                     : lv == "Intermediate" ? "Trung cấp" *@
+        @*                                     : "Nâng cao") *@
         @*                             </option> *@
         @*                         } *@
         @*                     </select> *@
         @*                 </div> *@
+
+        @*                 <!-- Khóa học --> *@
         @*                 <div class="col-md-3"> *@
         @*                     <label class="form-label">Khóa học cụ thể</label> *@
         @*                     <select name="courseId" class="form-select"> *@
         @*                         <option value="">Tất cả khóa học</option> *@
         @*                         @foreach (var course in ViewBag.Courses) *@
         @*                         { *@
-        @*                             <option value="@course.CourseId" selected="@(ViewBag.SelectedCourse == course.CourseId ? "selected" : null)"> *@
+        @*                             <option value="@course.CourseId" *@
+        @*                                     selected="@(ViewBag.SelectedCourse == course.CourseId)"> *@
         @*                                 @course.Title - (@course.CategoryName) *@
         @*                             </option> *@
         @*                         } *@
         @*                     </select> *@
         @*                 </div> *@
+
+        @*                 <!-- Giảng viên --> *@
         @*                 <div class="col-md-3"> *@
         @*                     <label class="form-label">Giảng viên</label> *@
         @*                     <select name="instructorId" class="form-select"> *@
         @*                         <option value="">Tất cả giảng viên</option> *@
         @*                         @foreach (var instructor in ViewBag.Instructors) *@
         @*                         { *@
-        @*                             <option value="@instructor.InstructorId" selected="@(ViewBag.SelectedInstructor == instructor.InstructorId ? "selected" : null)"> *@
+        @*                             <option value="@instructor.InstructorId" *@
+        @*                                     selected="@(ViewBag.SelectedInstructor == instructor.InstructorId)"> *@
         @*                                 @instructor.FullName *@
         @*                             </option> *@
         @*                         } *@
         @*                     </select> *@
         @*                 </div> *@
+
         @*             </div> *@
         @*         </div> *@
 
-        @*         <!-- Nút Lọc --> *@
-        @*         <div class="text-center"> *@
-        @*             <button type="submit" class="btn btn-light btn-lg px-5"> *@
-        @*                 <i class="fas fa-filter me-2"></i> Áp dụng Bộ lọc *@
-        @*             </button> *@
-        @*             <a href="@Url.Action("Index")" class="btn btn-outline-light btn-lg px-5 ms-2"> *@
-        @*                 <i class="fas fa-redo me-2"></i> Đặt lại *@
-        @*             </a> *@
-        @*         </div> *@
         @*     </form> *@
         @* </div> *@
+
+        @* <!-- Nút Lọc --> *@
+        @* <div class="text-center"> *@
+        @*     <button type="submit" class="btn btn-light btn-lg px-5"> *@
+        @*         <i class="fas fa-filter me-2"></i> Áp dụng Bộ lọc *@
+        @*     </button> *@
+
+        @*     <a href="@Url.Action("Index")" class="btn btn-outline-light btn-lg px-5 ms-2"> *@
+        @*         <i class="fas fa-redo me-2"></i> Đặt lại *@
+        @*     </a> *@
+        @* </div> *@
+</div>
 
         <!-- ========== KPI CARDS CHÍNH ========== -->
         <div class="row g-3 mb-4">

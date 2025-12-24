@@ -189,17 +189,13 @@ namespace course.Areas.Admin.Controllers
             if (!ModelState.IsValid)
             {
                 ViewData["InstructorId"] = new SelectList(
-                    _context.Instructors
-                        .Include(i => i.User)
-                        .Select(i => new {
-                            InstructorId = i.InstructorId,
-                            FullName = i.User.FullName
-                        })
-                        .ToList(),
-                    "InstructorId",
-                    "FullName",
-                    course.InstructorId
-                );
+                    _context.Instructors.Include(i => i.User)
+                    .Select(i => new {
+                        InstructorId = i.InstructorId,
+                        FullName = i.User.FullName
+                    })
+                    .ToList(),
+                    "InstructorId", "FullName", course.InstructorId);
 
                 ViewData["CategoryId"] = new SelectList(_context.CourseCategories.ToList(), "CategoryId", "Name", course.CategoryId);
 
@@ -209,12 +205,12 @@ namespace course.Areas.Admin.Controllers
             new SelectListItem { Value = "Intermediate", Text = "Trung cấp" },
             new SelectListItem { Value = "Advanced", Text = "Nâng cao" }
         };
+
                 return View(course);
             }
 
             try
             {
-                // Lấy course cũ để giữ lại CreatedAt và EnrollCount
                 var existingCourse = await _context.Courses.AsNoTracking().FirstOrDefaultAsync(c => c.CourseId == id);
                 if (existingCourse != null)
                 {
@@ -224,17 +220,17 @@ namespace course.Areas.Admin.Controllers
 
                 _context.Update(course);
                 await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Cập nhật khóa học thành công!";
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception)
             {
-                if (!_context.Courses.Any(e => e.CourseId == course.CourseId))
-                    return NotFound();
-                else
-                    throw;
+                TempData["Error"] = "Có lỗi xảy ra khi cập nhật khóa học!";
             }
 
             return RedirectToAction(nameof(Index));
         }
+
 
         // GET: Admin/Courses/Delete/5
         public async Task<IActionResult> Delete(int? id)

@@ -30,7 +30,7 @@ namespace course.Areas.Admin.Controllers
             return View(enrollments);
         }
 
- 
+
         // GET: Admin/Enrollments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -50,36 +50,39 @@ namespace course.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("EnrollmentId,UserId,CourseId,EnrollDate,Progress,HasCertificate,Amount,IsPaid,PaymentDate")] Enrollment enrollment)
         {
             if (id != enrollment.EnrollmentId) return NotFound();
+
+            // Giữ lại ngày đăng ký cũ nếu không nhập
             if (enrollment.EnrollDate == default(DateTime))
             {
-                var oldEnrollment = await _context.Enrollments.AsNoTracking().FirstOrDefaultAsync(e => e.EnrollmentId == id);
-                if (oldEnrollment != null)
-                    enrollment.EnrollDate = oldEnrollment.EnrollDate;
-                else
-                    enrollment.EnrollDate = DateTime.Now;
-            } 
+                var oldEnrollment = await _context.Enrollments.AsNoTracking()
+                    .FirstOrDefaultAsync(e => e.EnrollmentId == id);
+
+                enrollment.EnrollDate = oldEnrollment?.EnrollDate ?? DateTime.Now;
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(enrollment);
                     await _context.SaveChangesAsync();
+
+                    TempData["Success"] = "Cập nhật thông tin ghi danh thành công!";
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
-                    if (!_context.Enrollments.Any(e => e.EnrollmentId == id))
-                        return NotFound();
-                    throw;
+                    TempData["Error"] = "Có lỗi khi sửa thông tin ghi danh!";
                 }
+
                 return RedirectToAction(nameof(Index));
             }
 
-
             ViewData["CourseId"] = new SelectList(_context.Courses, "CourseId", "Title", enrollment.CourseId);
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "FullName", enrollment.UserId);
+
             return View(enrollment);
         }
-        
+
         // GET: Admin/Enrollments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -89,6 +92,7 @@ namespace course.Areas.Admin.Controllers
                 .Include(e => e.Course)
                 .Include(e => e.User)
                 .FirstOrDefaultAsync(m => m.EnrollmentId == id);
+
             if (enrollment == null) return NotFound();
 
             return View(enrollment);
@@ -99,32 +103,56 @@ namespace course.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var enrollment = await _context.Enrollments.FindAsync(id);
-            if (enrollment != null)
+            try
             {
-                _context.Enrollments.Remove(enrollment);
+                var enrollment = await _context.Enrollments.FindAsync(id);
+                if (enrollment != null)
+                {
+                    _context.Enrollments.Remove(enrollment);
+                    await _context.SaveChangesAsync();
+
+                    TempData["Success"] = "Xóa ghi danh thành công!";
+                }
+                else
+                {
+                    TempData["Error"] = "Không tìm thấy dữ liệu để xóa!";
+                }
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "Có lỗi khi xóa ghi danh!";
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
+
+        // POST: Cập nhật tình trạng thanh toán học phí
         [HttpPost]
         public async Task<IActionResult> UpdatePayment(int id)
         {
-            var enrollment = await _context.Enrollments.FindAsync(id);
-            if (enrollment == null) return NotFound();
+            try
+            {
+                var enrollment = await _context.Enrollments.FindAsync(id);
+                if (enrollment == null)
+                {
+                    TempData["Error"] = "Không tìm thấy thông tin học phí!";
+                    return RedirectToAction(nameof(Index));
+                }
 
-            enrollment.IsPaid = true;
-            enrollment.PaymentDate = DateTime.Now;
+                enrollment.IsPaid = true;
+                enrollment.PaymentDate = DateTime.Now;
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Cập nhật thanh toán học phí thành công!";
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "Có lỗi khi cập nhật học phí!";
+            }
+
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool EnrollmentExists(int id)
-        {
-            return _context.Enrollments.Any(e => e.EnrollmentId == id);
         }
     }
 }

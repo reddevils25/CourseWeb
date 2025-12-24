@@ -44,15 +44,12 @@ namespace course.Areas.Admin.Controllers
 
             return View();
         }
-
-        // POST: Admin/Assignments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Assignment assignment)
         {
             if (!ModelState.IsValid)
             {
-              
                 ViewBag.Lessons = _context.Lessons
                     .Select(l => new SelectListItem
                     {
@@ -64,10 +61,21 @@ namespace course.Areas.Admin.Controllers
                 return View(assignment);
             }
 
-            _context.Assignments.Add(assignment);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Assignments.Add(assignment);
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Thêm bài tập thành công!";
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "Có lỗi xảy ra khi thêm bài tập!";
+            }
+
             return RedirectToAction(nameof(Index));
         }
+
 
         // GET: Admin/Assignments/Edit/5
         public async Task<IActionResult> Edit(int id)
@@ -86,7 +94,6 @@ namespace course.Areas.Admin.Controllers
             return View(assignment);
         }
 
-        // POST: Admin/Assignments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Assignment assignment)
@@ -110,13 +117,12 @@ namespace course.Areas.Admin.Controllers
             {
                 _context.Assignments.Update(assignment);
                 await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Cập nhật bài tập thành công!";
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception)
             {
-                if (!_context.Assignments.Any(a => a.AssignmentId == assignment.AssignmentId))
-                    return NotFound();
-                else
-                    throw;
+                TempData["Error"] = "Có lỗi xảy ra khi sửa bài tập!";
             }
 
             return RedirectToAction(nameof(Index));
@@ -134,18 +140,33 @@ namespace course.Areas.Admin.Controllers
             return View(assignment);
         }
 
-        // POST: Admin/Assignments/Delete/5
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var assignment = await _context.Assignments.FindAsync(id);
-            if (assignment != null)
+            try
             {
+                var assignment = await _context.Assignments.FindAsync(id);
+                if (assignment == null)
+                {
+                    TempData["Error"] = "Không tìm thấy bài tập để xóa!";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 _context.Assignments.Remove(assignment);
                 await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Xóa bài tập thành công!";
             }
+            catch (Exception)
+            {
+                TempData["Error"] = "Có lỗi xảy ra khi xóa bài tập!";
+            }
+
             return RedirectToAction(nameof(Index));
         }
+
+
     }
 }
