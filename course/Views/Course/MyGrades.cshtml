@@ -1,0 +1,322 @@
+﻿@model List<course.Models.Submission>
+
+@{
+    ViewData["Title"] = "Điểm của tôi - " + ViewBag.Course.Title;
+}
+
+<style>
+    body {
+        background: #f0f4f8;
+    }
+
+    .grades-container {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .header-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    }
+
+    .grade-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+    }
+
+        .grade-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+    .grade-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f4f8;
+    }
+
+    .score-display {
+        text-align: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 12px;
+        min-width: 120px;
+    }
+
+        .score-display.graded {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .score-display.pending {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+    .score-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .score-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .stat-box {
+        text-align: center;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #667eea;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+
+    .answer-box {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    .feedback-box {
+        background: #e7f3ff;
+        border-left: 4px solid #0066cc;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+    }
+
+        .feedback-box strong {
+            color: #0066cc;
+        }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 15px;
+    }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+    .badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .badge-success {
+        background: #28a745;
+        color: white;
+    }
+
+    .badge-warning {
+        background: #ffc107;
+        color: #000;
+    }
+
+    .badge-danger {
+        background: #dc3545;
+        color: white;
+    }
+</style>
+
+<div class="grades-container">
+    <div class="header-card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 style="margin: 0 0 10px 0;">Điểm số của tôi</h2>
+                <p style="color: #666; margin: 0;">
+                    <i class="fas fa-book"></i> @ViewBag.Course.Title
+                </p>
+                <p style="color: #666; margin: 5px 0 0 0;">
+                    <i class="fas fa-user"></i> Giảng viên: @ViewBag.Course.Instructor.User.FullName
+                </p>
+            </div>
+            <a href="/Course/Learn/@ViewBag.Course.CourseId" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Quay lại học
+            </a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-number">@Model.Count</div>
+                <div class="stat-label">Bài tập đã nộp</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">@Model.Count(s => s.Score.HasValue)</div>
+                <div class="stat-label">Đã có điểm</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">@Model.Count(s => !s.Score.HasValue)</div>
+                <div class="stat-label">Chưa chấm</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">
+                    @if (Model.Any(s => s.Score.HasValue))
+                    {
+                        @Math.Round(Model.Where(s => s.Score.HasValue).Average(s => s.Score.Value), 1)
+                    }
+                    else
+                    {
+                        <span>--</span>
+                    }
+                </div>
+                <div class="stat-label">Điểm trung bình</div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        foreach (var submission in Model)
+        {
+            <div class="grade-card">
+                <div class="grade-header">
+                    <div style="flex: 1;">
+                        <h4 style="margin: 0 0 10px 0;">@submission.Assignment.Title</h4>
+                        <p style="color: #666; margin: 0 0 5px 0;">
+                            <i class="fas fa-book-open"></i> Bài học: @submission.Assignment.Lesson.Title
+                        </p>
+                        <p style="color: #666; margin: 0;">
+                            <i class="fas fa-calendar"></i> Nộp lúc: @submission.SubmittedAt
+                        </p>
+                        @if (submission.Assignment.Deadline.HasValue)
+                        {
+                            var isLate = submission.SubmittedAt > submission.Assignment.Deadline.Value;
+                            <p style="color: #666; margin: 5px 0 0 0;">
+                                <i class="fas fa-clock"></i> Hạn nộp: @submission.Assignment.Deadline.Value.ToString("dd/MM/yyyy HH:mm")
+                                @if (isLate)
+                                {
+                                    <span class="badge badge-danger">Nộp muộn</span>
+                                }
+                            </p>
+                        }
+                    </div>
+                    <div class="score-display @(submission.Score.HasValue ? "graded" : "pending")">
+                        @if (submission.Score.HasValue)
+                        {
+                            <div class="score-number">@submission.Score</div>
+                            <div class="score-label">/ 100 điểm</div>
+                            @if (submission.GradedAt.HasValue)
+                            {
+                                <div style="font-size: 0.75rem; margin-top: 5px; opacity: 0.8;">
+                                    @submission.GradedAt.Value.ToString("dd/MM/yyyy")
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div style="font-size: 1.2rem;">
+                                <i class="fas fa-hourglass-half"></i>
+                            </div>
+                            <div class="score-label">Chưa chấm</div>
+                        }
+                    </div>
+                </div>
+
+                <div>
+                    <strong>Đề bài:</strong>
+                    <p style="margin: 10px 0;">@submission.Assignment.Description</p>
+
+                    <strong>Bài làm của bạn:</strong>
+                    <div class="answer-box">
+                        @(submission.AnswerText ?? "(Không có câu trả lời)")
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(submission.Feedback))
+                    {
+                        <div class="feedback-box">
+                            <strong><i class="fas fa-comment-alt"></i> Nhận xét từ giảng viên:</strong>
+                            <p style="margin: 10px 0 0 0;">@submission.Feedback</p>
+                        </div>
+                    }
+                    else if (submission.Score.HasValue)
+                    {
+                        <div class="feedback-box">
+                            <strong><i class="fas fa-check-circle"></i> Đã chấm điểm</strong>
+                            <p style="margin: 10px 0 0 0;">Bài làm của bạn đã được chấm điểm nhưng chưa có nhận xét.</p>
+                        </div>
+                    }
+                </div>
+
+                @if (!submission.Score.HasValue && submission.Assignment.Deadline.HasValue && DateTime.Now < submission.Assignment.Deadline.Value)
+                {
+                    <div style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                        <i class="fas fa-info-circle"></i>
+                        Bài làm đang chờ giảng viên chấm điểm. Bạn vẫn có thể nộp lại trước hạn.
+                    </div>
+                }
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="fas fa-clipboard-list"></i>
+            <p style="color: #999; font-size: 1.1rem;">Bạn chưa nộp bài tập nào</p>
+            <a href="/Course/Learn/@ViewBag.Course.CourseId" class="btn btn-primary">
+                <i class="fas fa-book-open"></i> Bắt đầu học
+            </a>
+        </div>
+    }
+</div>

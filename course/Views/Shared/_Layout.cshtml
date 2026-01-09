@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Index - Learner Bootstrap Template</title>
+    <title>Khóa học trực tuyến</title>
     <meta name="description" content="">
     <meta name="keywords" content="">
 
@@ -53,7 +53,53 @@
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
 
-            <a class="btn-getstarted" href="enroll.html">Enroll Now</a>
+            @{
+                var userId = Context.Session.GetInt32("UserId");
+                var fullName = Context.Session.GetString("FullName");
+                var avatar = Context.Session.GetString("Avatar");
+            }
+
+            @if (userId != null)
+            {
+                <div class="dropdown">
+                    <a class="btn-getstarted dropdown-toggle d-flex align-items-center gap-2"
+                       href="#"
+                       data-bs-toggle="dropdown">
+                        <img src="@avatar"
+                             alt="avatar"
+                             style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
+                        <span>@fullName</span>
+                    </a>
+
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item"
+                               asp-controller="Enrollment"
+                               asp-action="MyCourses">
+                                <i class="bi bi-journal-bookmark"></i> Khóa học của tôi
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               asp-controller="Account"
+                               asp-action="Logout">
+                                <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <a class="btn-getstarted"
+                   asp-controller="Account"
+                   asp-action="Login">
+                    Đăng nhập
+                </a>
+            }
+
 
         </div>
     </header>

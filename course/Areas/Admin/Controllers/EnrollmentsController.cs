@@ -127,7 +127,6 @@ namespace course.Areas.Admin.Controllers
         }
 
 
-        // POST: Cập nhật tình trạng thanh toán học phí
         [HttpPost]
         public async Task<IActionResult> UpdatePayment(int id)
         {

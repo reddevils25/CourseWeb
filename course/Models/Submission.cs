@@ -14,6 +14,8 @@ public partial class Submission
     public string? AnswerText { get; set; }
 
     public string? FilePath { get; set; }
+    public string? Feedback { get; set; }
+    public DateTime? GradedAt { get; set; }
 
     public double? Score { get; set; }
 

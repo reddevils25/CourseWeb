@@ -18,23 +18,32 @@ namespace course.Controllers
         // GET: Profile/Index
         public async Task<IActionResult> Index()
         {
+            Console.WriteLine("=== PROFILE INDEX CALLED ===");
+
             var userId = HttpContext.Session.GetInt32("UserId");
+            Console.WriteLine($"UserId from session: {userId}");
+
             if (!userId.HasValue)
             {
+                Console.WriteLine("No UserId - Redirecting to Login");
                 return RedirectToAction("Login", "Account");
             }
 
             var role = HttpContext.Session.GetString("Role");
+            Console.WriteLine($"Role: {role}");
 
             if (role == "Instructor")
             {
+                Console.WriteLine("Going to InstructorProfile");
                 return await InstructorProfile();
             }
             else if (role == "Student")
             {
+                Console.WriteLine("Going to StudentProfile");
                 return await StudentProfile();
             }
 
+            Console.WriteLine("No valid role - Redirecting to Home");
             return RedirectToAction("Index", "Home");
         }
 
@@ -69,30 +78,40 @@ namespace course.Controllers
             ViewBag.InProgressCourses = enrollments.Count(e => e.Progress < 100);
 
             return View("StudentProfile", user);
-
         }
 
-        // GET: Profile/InstructorProfile 
         public async Task<IActionResult> InstructorProfile()
         {
+            Console.WriteLine("=== INSTRUCTOR PROFILE CALLED ===");
+
             var userId = HttpContext.Session.GetInt32("UserId");
+            Console.WriteLine($"UserId: {userId}");
+
             if (!userId.HasValue)
             {
+                Console.WriteLine("No UserId - Redirecting to Login");
                 return RedirectToAction("Login", "Account");
             }
+
+            Console.WriteLine("Fetching instructor from database...");
 
             var instructor = await _context.Instructors
                 .Include(i => i.User)
                 .Include(i => i.Courses)
                     .ThenInclude(c => c.Enrollments)
+                        .ThenInclude(e => e.User)
                 .Include(i => i.Courses)
                     .ThenInclude(c => c.Lessons)
                 .FirstOrDefaultAsync(i => i.UserId == userId.Value);
 
             if (instructor == null)
             {
-                return NotFound();
+                Console.WriteLine($"ERROR: No instructor found for UserId {userId}");
+                return NotFound($"Không tìm thấy giảng viên với UserId: {userId}");
             }
+
+            Console.WriteLine($"Instructor found: {instructor.User.FullName}");
+            Console.WriteLine($"Courses count: {instructor.Courses.Count}");
 
             ViewBag.TotalCourses = instructor.Courses.Count;
             ViewBag.TotalStudents = instructor.Courses.Sum(c => c.Enrollments.Count);
@@ -102,19 +121,25 @@ namespace course.Controllers
                 .Sum(e => e.Amount);
             ViewBag.TotalLessons = instructor.Courses.Sum(c => c.Lessons.Count);
 
+            Console.WriteLine($"ViewBag - TotalCourses: {ViewBag.TotalCourses}");
+            Console.WriteLine($"ViewBag - TotalStudents: {ViewBag.TotalStudents}");
+            Console.WriteLine($"ViewBag - TotalRevenue: {ViewBag.TotalRevenue}");
+            Console.WriteLine($"ViewBag - TotalLessons: {ViewBag.TotalLessons}");
+
             var courses = await _context.Courses
                 .Include(c => c.Enrollments)
+                    .ThenInclude(e => e.User)
                 .Include(c => c.Lessons)
                 .Where(c => c.InstructorId == instructor.InstructorId)
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
 
             ViewBag.Courses = courses;
+            Console.WriteLine($"Courses loaded: {courses.Count}");
 
+            Console.WriteLine("Returning view...");
             return View("InstructorProfile", instructor);
-
         }
-
         // POST: Profile/UpdateProfile
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -192,6 +217,50 @@ namespace course.Controllers
             return Json(new { success = true, message = "Đổi mật khẩu thành công!" });
         }
 
+        // POST: Profile/RemoveStudent - XÓA HỌC VIÊN KHỎI KHÓA HỌC
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveStudent(int enrollmentId)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (!userId.HasValue)
+            {
+                return Json(new { success = false, message = "Vui lòng đăng nhập" });
+            }
+
+            var instructor = await _context.Instructors
+                .FirstOrDefaultAsync(i => i.UserId == userId.Value);
+
+            if (instructor == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy giảng viên" });
+            }
+
+            var enrollment = await _context.Enrollments
+                .Include(e => e.Course)
+                .Include(e => e.User)
+                .FirstOrDefaultAsync(e => e.EnrollmentId == enrollmentId);
+
+            if (enrollment == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy đăng ký khóa học" });
+            }
+
+            if (enrollment.Course.InstructorId != instructor.InstructorId)
+            {
+                return Json(new { success = false, message = "Bạn không có quyền xóa học viên này" });
+            }
+
+            _context.Enrollments.Remove(enrollment);
+            await _context.SaveChangesAsync();
+
+            return Json(new
+            {
+                success = true,
+                message = $"Đã xóa học viên {enrollment.User.FullName} khỏi khóa học {enrollment.Course.Title}"
+            });
+        }
+
         // POST: Profile/DeleteLesson
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -246,16 +315,98 @@ namespace course.Controllers
             }
 
             _context.Lessons.RemoveRange(course.Lessons);
-
-
             _context.Enrollments.RemoveRange(course.Enrollments);
-
-
             _context.Courses.Remove(course);
 
             await _context.SaveChangesAsync();
 
             return Json(new { success = true, message = "Xóa khóa học thành công!" });
+        }
+        [HttpGet]
+        public async Task<IActionResult> ViewAssignments(int courseId)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (!userId.HasValue)
+            {
+                return Json(new { success = false, message = "Vui lòng đăng nhập" });
+            }
+
+            var instructor = await _context.Instructors
+                .FirstOrDefaultAsync(i => i.UserId == userId.Value);
+
+            if (instructor == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy giảng viên" });
+            }
+
+            var assignments = await _context.Assignments
+                .Include(a => a.Lesson)
+                .Include(a => a.Submissions)
+                    .ThenInclude(s => s.Student)
+                     .ThenInclude(st => st.User)
+                .Where(a => a.Lesson.CourseId == courseId)
+                .OrderByDescending(a => a.AssignmentId)
+                .ToListAsync();
+
+            var course = await _context.Courses
+                .FirstOrDefaultAsync(c => c.CourseId == courseId && c.InstructorId == instructor.InstructorId);
+
+            if (course == null)
+            {
+                return Json(new { success = false, message = "Không có quyền truy cập" });
+            }
+
+            ViewBag.Course = course;
+            return View("ViewAssignments", assignments);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GradeSubmission(int submissionId, decimal score, string feedback)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (!userId.HasValue)
+            {
+                return Json(new { success = false, message = "Vui lòng đăng nhập" });
+            }
+
+            var instructor = await _context.Instructors
+                .FirstOrDefaultAsync(i => i.UserId == userId.Value);
+
+            if (instructor == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy giảng viên" });
+            }
+
+            var submission = await _context.Submissions
+       .Include(s => s.Student)
+           .ThenInclude(st => st.User)  
+       .Include(s => s.Assignment)
+           .ThenInclude(a => a.Lesson)
+               .ThenInclude(l => l.Course)
+       .FirstOrDefaultAsync(s => s.SubmissionId == submissionId);
+
+            if (submission == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy bài nộp" });
+            }
+
+            if (submission.Assignment.Lesson.Course.InstructorId != instructor.InstructorId)
+            {
+                return Json(new { success = false, message = "Không có quyền chấm điểm" });
+            }
+
+            submission.Score = (double)score;
+            submission.Feedback = feedback;
+            submission.GradedAt = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+
+            return Json(new
+            {
+                success = true,
+                message = $"Đã chấm điểm {score}/100 cho {submission.Student.User.FullName}"
+            });
         }
 
         private string HashPassword(string password)

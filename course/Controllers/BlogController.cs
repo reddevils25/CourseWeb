@@ -73,6 +73,41 @@ namespace course.Controllers
             return View((featured, posts, page, totalPages));
         }
 
+        [HttpPost]
+        [Route("/blog/comment")]
+        public async Task<IActionResult> Comment(int BlogId, int Rating, string Comment)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+            if (!userId.HasValue)
+            {
+                TempData["msg"] = "Vui lòng đăng nhập để bình luận.";
+                return RedirectToAction("Details", new { id = BlogId });
+            }
+
+            if (Rating < 1 || Rating > 5)
+            {
+                TempData["msg"] = "Vui lòng chọn số sao đánh giá.";
+                return RedirectToAction("Details", new { id = BlogId });
+            }
+
+            var blog = await _context.Blogs.FindAsync(BlogId);
+            if (blog == null) return NotFound();
+
+            var blogComment = new BlogComment
+            {
+                BlogId = BlogId,
+                UserId = userId.Value,
+                Rating = Rating,
+                Comment = Comment,
+                CreatedAt = DateTime.Now
+            };
+
+            _context.BlogComments.Add(blogComment);
+            await _context.SaveChangesAsync();
+
+            return Redirect($"/blog/{blog.Slug}-{blog.BlogId}.html");
+        }
 
     }
 }

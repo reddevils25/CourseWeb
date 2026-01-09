@@ -305,6 +305,14 @@ public partial class CourseContext : DbContext
             entity.Property(e => e.SubmittedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.Feedback)
+    .HasColumnType("nvarchar(max)");
+
+            entity.Property(e => e.GradedAt)
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.Score)
+                .HasColumnType("float");
 
             entity.HasOne(d => d.Assignment).WithMany(p => p.Submissions)
                 .HasForeignKey(d => d.AssignmentId)

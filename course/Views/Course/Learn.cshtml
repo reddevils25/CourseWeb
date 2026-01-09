@@ -5,6 +5,27 @@
     string previewVideo = ViewBag.PreviewVideo as string ?? "";
 }
 
+<style>
+    .btn-grades {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+        .btn-grades:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(240, 147, 251, 0.4);
+            color: white;
+        }
+</style>
+
 <div class="container my-4">
     <div class="row">
         <div class="col-md-8">
@@ -18,7 +39,6 @@
 
             <div class="card">
                 <div class="card-body">
-                    <!-- Video player: nếu lưu iframe trong DB thì render trực tiếp -->
                     @if (!string.IsNullOrWhiteSpace(previewVideo))
                     {
                         <div class="mb-3 embed-responsive embed-responsive-16by9">
@@ -43,18 +63,24 @@
                         </div>
                     </div>
 
-                    <!-- Nút Next / Mark complete -->
-                    <div class="mb-3">
-                        <button id="btnMarkComplete" class="btn btn-success">Đánh dấu đã hoàn thành bài này</button>
+                    <!-- Nút Actions -->
+                    <div class="mb-3" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button id="btnMarkComplete" class="btn btn-success">
+                            <i class="fas fa-check"></i> Đánh dấu hoàn thành
+                        </button>
+                        <a href="/Course/ViewMyGrades?courseId=@Model.CourseId" class="btn-grades">
+                            <i class="fas fa-star"></i> Xem điểm của tôi
+                        </a>
                     </div>
-
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
             <div class="card mb-3">
-                <div class="card-header">Danh sách bài học</div>
+                <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <i class="fas fa-list"></i> Danh sách bài học
+                </div>
                 <div class="list-group list-group-flush">
                     @if (Model.Lessons != null && Model.Lessons.Any())
                     {
@@ -64,9 +90,16 @@
                                class="list-group-item list-group-item-action lesson-item"
                                data-video='@Html.Raw(System.Net.WebUtility.HtmlEncode(lesson.VideoUrl ?? ""))'
                                data-lessonid="@lesson.LessonId">
-                                <strong>@lesson.Title</strong>
-                                <div>
-                                    <small>@(lesson.Duration.ToString() ?? "")</small>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <strong>@lesson.Title</strong>
+                                        <div>
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock"></i> @(lesson.Duration?.ToString() ?? "")
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-play-circle" style="color: #667eea; font-size: 1.5rem;"></i>
                                 </div>
                             </a>
                         }
@@ -80,9 +113,12 @@
 
             <div class="card">
                 <div class="card-body text-center">
-                    <p><strong>Khóa học</strong></p>
-                    <p>@Model.EnrollCount Sinh viên</p>
-                    <a href="/Profile" class="btn btn-outline-primary">Trang cá nhân</a>
+                    <p><strong>Thông tin khóa học</strong></p>
+                    <p><i class="fas fa-users"></i> @Model.EnrollCount Học viên</p>
+                    <p><i class="fas fa-book"></i> @Model.Lessons.Count Bài học</p>
+                    <a href="/Profile" class="btn btn-outline-primary">
+                        <i class="fas fa-user"></i> Trang cá nhân
+                    </a>
                 </div>
             </div>
         </div>
@@ -90,47 +126,53 @@
 </div>
 
 <script>
-    // Khi click vào một lesson, load video vào player (thay iframe)
     document.querySelectorAll('.lesson-item').forEach(function (el) {
         el.addEventListener('click', function (e) {
             e.preventDefault();
-            // video lưu trong data-video (HTML encoded). Lấy và decode
+
+            // Remove active class from all items
+            document.querySelectorAll('.lesson-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Add active to current item
+            this.classList.add('active');
+
             var encoded = this.getAttribute('data-video') || "";
             var videoHtml = decodeHtml(encoded);
-            // thay thế phần player bằng video mới
+
             var container = document.querySelector('.card .embed-responsive') || null;
             if (container) {
                 container.innerHTML = videoHtml;
             } else {
-                // tạo mới
                 var cardBody = document.querySelector('.card .card-body');
                 if (cardBody) {
                     var div = document.createElement('div');
                     div.className = 'mb-3 embed-responsive embed-responsive-16by9';
                     div.innerHTML = videoHtml;
-                    // chèn lên đầu cardBody
                     cardBody.insertBefore(div, cardBody.firstChild);
                 }
             }
         });
     });
 
-    // decode HTML entity (simple)
     function decodeHtml(html) {
         var txt = document.createElement('textarea');
         txt.innerHTML = html;
         return txt.value;
     }
 
-    // Mark complete: gửi AJAX để cập nhật progress (nếu bạn có API)
     document.getElementById('btnMarkComplete')?.addEventListener('click', async function () {
-        // Gọi API hoặc action để update tiến độ:
         try {
             const resp = await fetch('/Enrollment/UpdateProgress', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ EnrollmentId: @((enrollment?.EnrollmentId) ?? 0), Progress: 100 })
+                body: JSON.stringify({
+                    EnrollmentId: @((enrollment?.EnrollmentId) ?? 0),
+                    Progress: 100
+                })
             });
+
             if (resp.ok) {
                 alert('Đã cập nhật tiến độ lên 100%');
                 location.reload();
@@ -142,3 +184,19 @@
         }
     });
 </script>
+
+<style>
+    .lesson-item {
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+        .lesson-item:hover {
+            background: #f8f9fa !important;
+        }
+
+        .lesson-item.active {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%) !important;
+            border-left: 4px solid #667eea;
+        }
+</style>

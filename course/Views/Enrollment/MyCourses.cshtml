@@ -1,0 +1,60 @@
+﻿@model List<Enrollment>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="d-flex align-items-center mb-4">
+                <i class="bi bi-journal-bookmark-fill text-primary me-3" style="font-size: 2rem;"></i>
+                <h2 class="mb-0 fw-bold">Khóa học của tôi</h2>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+                    <p class="text-muted mt-3 fs-5">Bạn chưa đăng ký khóa học nào.</p>
+                    <a href="/" class="btn btn-primary mt-3">
+                        <i class="bi bi-search me-2"></i>Khám phá khóa học
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="row g-4">
+                    @foreach (var e in Model)
+                    {
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 shadow-sm border-0 hover-card">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="mb-3">
+                                        <span class="badge bg-success mb-2">Đã đăng ký</span>
+                                        <h5 class="card-title fw-bold">@e.Course.Title</h5>
+                                    </div>
+                                    <div class="mt-auto">
+                                        <a asp-controller="Courses"
+                                           asp-action="Detail"
+                                           asp-route-id="@e.CourseId"
+                                           class="btn btn-primary w-100">
+                                            <i class="bi bi-play-circle me-2"></i>Vào học
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+        }
+</style>

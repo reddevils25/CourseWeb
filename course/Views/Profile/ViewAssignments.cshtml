@@ -1,0 +1,510 @@
+﻿@model List<course.Models.Assignment>
+
+@{
+    ViewData["Title"] = "Quản lý bài tập - " + ViewBag.Course.Title;
+}
+@if (ViewBag.Course == null)
+{
+    <div class="alert alert-danger">
+        Không tìm thấy thông tin khóa học.
+    </div>
+    return;
+}
+<style>
+    body {
+        background: #f0f4f8;
+    }
+
+    .assignment-container {
+        max-width: 1400px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .header-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    }
+
+    .assignment-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .assignment-header {
+        border-bottom: 2px solid #f0f4f8;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+
+    .submission-item {
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        transition: all 0.3s;
+    }
+
+        .submission-item:hover {
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+
+    .student-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .score-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+        .score-badge.graded {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .score-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
+        }
+
+    .btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #ffe3a2 0%, #ff004a 100%);
+        color: white;
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(5px);
+    }
+
+    .modal-dialog {
+        position: relative;
+        margin: 3% auto;
+        max-width: 800px;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+        background: #fff;
+        color: white;
+        padding: 25px;
+    }
+
+    .modal-body {
+        padding: 30px;
+        max-height: 600px;
+        overflow-y: auto;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 0.95rem;
+    }
+
+    .alert {
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .alert-danger {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .answer-box {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    .stats-row {
+        display: flex;
+        gap: 20px;
+        margin-top: 15px;
+    }
+
+    .stat-item {
+        flex: 1;
+        text-align: center;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .stat-number {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #667eea;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="assignment-container">
+    <div id="alertMessage" style="display: none;"></div>
+
+    <div class="header-card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 style="margin: 0 0 10px 0;">Quản lý bài tập</h2>
+                <p style="color: #666; margin: 0;">
+                    <i class="fas fa-book"></i> @ViewBag.Course.Title
+                </p>
+            </div>
+            <a href="/Profile" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="stat-number">@Model.Count</div>
+                <div class="stat-label">Bài tập</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">@Model.Sum(a => a.Submissions.Count)</div>
+                <div class="stat-label">Bài nộp</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">@Model.Sum(a => a.Submissions.Count(s => s.Score != null))</div>
+                <div class="stat-label">Đã chấm</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">@Model.Sum(a => a.Submissions.Count(s => s.Score == null))</div>
+                <div class="stat-label">Chưa chấm</div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        foreach (var assignment in Model)
+        {
+            <div class="assignment-card">
+                <div class="assignment-header">
+                    <h4 style="margin: 0 0 5px 0;">@assignment.Title</h4>
+                    <p style="color: #666; margin: 0;">
+                        <i class="fas fa-book-open"></i> Bài học: @assignment.Lesson.Title
+                        @if (assignment.Deadline.HasValue)
+                        {
+                            <span style="margin-left: 15px;">
+                                <i class="fas fa-clock"></i>
+                                Hạn: @assignment.Deadline.Value.ToString("dd/MM/yyyy HH:mm")
+                            </span>
+                        }
+                    </p>
+                </div>
+
+                <p style="margin-bottom: 15px;">@assignment.Description</p>
+
+                <div style="margin-bottom: 15px;">
+                    <strong>Bài nộp: @assignment.Submissions.Count</strong>
+                    <span style="margin-left: 15px; color: #28a745;">
+                        <i class="fas fa-check"></i> Đã chấm: @assignment.Submissions.Count(s => s.Score != null)
+                    </span>
+                    <span style="margin-left: 15px; color: #ffc107;">
+                        <i class="fas fa-clock"></i> Chưa chấm: @assignment.Submissions.Count(s => s.Score == null)
+                    </span>
+                </div>
+
+                @if (assignment.Submissions.Any())
+                {
+                    <h5 style="margin: 20px 0 15px 0;">Danh sách bài nộp:</h5>
+
+                    foreach (var submission in assignment.Submissions.OrderByDescending(s => s.SubmittedAt))
+                    {
+                        <div class="submission-item">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div style="flex: 1;">
+                                    <div class="student-info">
+                                        <img src="@submission.Student.User.Avatar" class="student-avatar" alt="Avatar">
+                                        <div>
+                                            <strong>@submission.Student.User.FullName</strong>
+                                            <div style="font-size: 0.85rem; color: #666;">
+                                                @submission.Student.User.Email
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-bottom: 10px;">
+                                        <small style="color: #666;">
+                                            <i class="fas fa-calendar"></i> Nộp lúc: @submission.SubmittedAt
+                                        </small>
+                                    </div>
+
+                                    @if (submission.Score.HasValue)
+                                    {
+                                        <span class="score-badge graded">
+                                            <i class="fas fa-check-circle"></i> Điểm: @submission.Score/100
+                                        </span>
+                                        @if (!string.IsNullOrEmpty(submission.Feedback))
+                                        {
+                                            <div style="margin-top: 10px; padding: 10px; background: #e7f3ff; border-left: 3px solid #0066cc; border-radius: 4px;">
+                                                <strong style="color: #0066cc;">Nhận xét:</strong>
+                                                <p style="margin: 5px 0 0 0;">@submission.Feedback</p>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="score-badge pending">
+                                            <i class="fas fa-hourglass-half"></i> Chưa chấm điểm
+                                        </span>
+                                    }
+                                </div>
+
+                                <div style="display: flex; gap: 10px;">
+                                    <button onclick="viewSubmission(@submission.SubmissionId)" class="btn btn-primary">
+                                        <i class="fas fa-eye"></i> Xem
+                                    </button>
+                                    <button onclick="gradeSubmission(@submission.SubmissionId, '@submission.Student.User.FullName')" class="btn btn-success">
+                                        <i class="fas fa-star"></i> Chấm điểm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p style="text-align: center; color: #999; padding: 20px;">Chưa có bài nộp nào</p>
+                }
+            </div>
+        }
+    }
+    else
+    {
+        <div class="assignment-card" style="text-align: center; padding: 60px;">
+            <i class="fas fa-clipboard-list" style="font-size: 4rem; color: #ccc; margin-bottom: 20px;"></i>
+            <p style="color: #999; font-size: 1.1rem;">Chưa có bài tập nào</p>
+        </div>
+    }
+</div>
+
+<!-- Modal View Submission -->
+<div id="viewModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="viewModalTitle">Xem bài làm</h3>
+                <button class="close" onclick="closeViewModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button>
+            </div>
+            <div class="modal-body" id="viewModalContent">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Grade Submission -->
+<div id="gradeModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="gradeModalTitle">Chấm điểm</h3>
+                <button class="close" onclick="closeGradeModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="gradeForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="submissionId" name="submissionId">
+
+                    <div id="gradeModalAnswer"></div>
+
+                    <div class="form-group">
+                        <label>Điểm (0-100) <span style="color: red;">*</span></label>
+                        <input type="number" class="form-control" id="score" name="score" min="0" max="100" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nhận xét</label>
+                        <textarea class="form-control" id="feedback" name="feedback" rows="4" placeholder="Nhập nhận xét cho học viên..."></textarea>
+                    </div>
+
+                    <div style="text-align: right;">
+                        <button type="button" class="btn" style="background: #6c757d; color: white;" onclick="closeGradeModal()">Hủy</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check"></i> Lưu điểm
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const submissions = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+        Model.SelectMany(a => a.Submissions.Select(s => new
+        {
+            s.SubmissionId,
+            s.AnswerText,
+            s.Score,
+            s.Feedback,
+            StudentName = s.Student.User.FullName,
+            SubmittedAt = s.SubmittedAt
+        }))
+    ));
+
+    function showAlert(message, type) {
+        const alertDiv = document.getElementById('alertMessage');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : 'times'}-circle"></i> ${message}`;
+        alertDiv.style.display = 'block';
+        setTimeout(() => alertDiv.style.display = 'none', 4000);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function viewSubmission(submissionId) {
+        const submission = submissions.find(s => s.SubmissionId === submissionId);
+        if (!submission) return;
+
+        document.getElementById('viewModalTitle').textContent = `Bài làm của ${submission.StudentName}`;
+        document.getElementById('viewModalContent').innerHTML = `
+            <div style="margin-bottom: 15px;">
+                <strong>Học viên:</strong> ${submission.StudentName}<br>
+                <strong>Thời gian nộp:</strong> ${submission.SubmittedAt}
+            </div>
+            <div class="answer-box">
+                ${submission.AnswerText || '(Không có câu trả lời)'}
+            </div>
+            ${submission.Score !== null ? `
+                <div style="margin-top: 15px; padding: 15px; background: #d4edda; border-radius: 8px;">
+                    <strong style="color: #155724;">Điểm: ${submission.Score}/100</strong>
+                    ${submission.Feedback ? `<p style="margin: 10px 0 0 0;">Nhận xét: ${submission.Feedback}</p>` : ''}
+                </div>
+            ` : ''}
+        `;
+        document.getElementById('viewModal').style.display = 'block';
+    }
+
+    function closeViewModal() {
+        document.getElementById('viewModal').style.display = 'none';
+    }
+
+    function gradeSubmission(submissionId, studentName) {
+        const submission = submissions.find(s => s.SubmissionId === submissionId);
+        if (!submission) return;
+
+        document.getElementById('gradeModalTitle').textContent = `Chấm điểm - ${studentName}`;
+        document.getElementById('submissionId').value = submissionId;
+        document.getElementById('score').value = submission.Score || '';
+        document.getElementById('feedback').value = submission.Feedback || '';
+
+        document.getElementById('gradeModalAnswer').innerHTML = `
+            <div style="margin-bottom: 20px;">
+                <strong>Bài làm của học viên:</strong>
+                <div class="answer-box">${submission.AnswerText || '(Không có câu trả lời)'}</div>
+            </div>
+        `;
+
+        document.getElementById('gradeModal').style.display = 'block';
+    }
+
+    function closeGradeModal() {
+        document.getElementById('gradeModal').style.display = 'none';
+    }
+
+    document.getElementById('gradeForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetch('/Profile/GradeSubmission', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showAlert(result.message, 'success');
+                closeGradeModal();
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showAlert(result.message, 'danger');
+            }
+        } catch (error) {
+            showAlert('Có lỗi xảy ra', 'danger');
+        }
+    });
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    }
+</script>

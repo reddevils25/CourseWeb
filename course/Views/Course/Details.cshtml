@@ -3,6 +3,13 @@
     List<CourseReview> courseReview = ViewBag.courseReview;
     List<Course> courseRelated = ViewBag.courseRelated;
 }
+@if (TempData["msg"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["msg"]
+    </div>
+}
+
 <style>
     #btnEnroll {
         background-color: #ec5252;
@@ -230,6 +237,49 @@
                                             </div>
                                         }
                                     }
+                                    @if (Context.Session.GetInt32("UserId") != null)
+                                    {
+                                        <div class="review-form mb-4">
+                                            <h5>Đánh giá khóa học</h5>
+
+                                            <form asp-controller="Course"
+                                                  asp-action="AddReview"
+                                                  method="post">
+
+                                                <input type="hidden" name="CourseId" value="@Model.CourseId" />
+
+                                                <div class="mb-2">
+                                                    <label>Đánh giá sao</label>
+                                                    <select name="Rating" class="form-select" required>
+                                                        <option value="">-- Chọn --</option>
+                                                        <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                                                        <option value="4">⭐⭐⭐⭐ (4)</option>
+                                                        <option value="3">⭐⭐⭐ (3)</option>
+                                                        <option value="2">⭐⭐ (2)</option>
+                                                        <option value="1">⭐ (1)</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="mb-2">
+                                                    <label>Nhận xét</label>
+                                                    <textarea name="Comment"
+                                                              class="form-control"
+                                                              rows="3"
+                                                              required></textarea>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-primary">
+                                                    Gửi đánh giá
+                                                </button>
+                                            </form>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-muted">
+                                            Vui lòng <a href="/Account/Login">đăng nhập</a> để đánh giá khóa học.
+                                        </p>
+                                    }
 
                                 </div>
 
@@ -289,15 +339,34 @@
                             </div>
 
                             <div class="action-buttons">
-                                <button id="btnEnroll" data-course="@Model.CourseId" class="btn-primary">
-                                    Đăng ký ngay
+
+                                @if (ViewBag.IsEnrolled == true)
+                                {
+                                    <a asp-controller="Course"
+                                       asp-action="Learn"
+                                       asp-route-id="@Model.CourseId"
+                                       class="btn btn-success w-100 mb-2">
+                                        <i class="bi bi-play-circle"></i> Vào học
+                                    </a>
+                                }
+                                else
+                                {
+                                    <button id="btnEnroll"
+                                            data-course="@Model.CourseId"
+                                            data-price="@Model.Price"
+                                            class="btn-primary w-100 mb-2">
+                                        @(Model.Price > 0 ? "Mua khóa học" : "Đăng ký miễn phí")
+                                    </button>
+                                }
+
+                                <div id="notifyBox" class="alert d-none mt-2"></div>
+
+                                <button class="btn-secondary w-100 mt-2">
+                                    Thêm vào danh sách mong muốn
                                 </button>
 
-                                <div id="notifyBox" class="alert d-none"></div>
-
-
-                                <button class="btn-secondary">Thêm vào danh sách mong muốn</button>
                             </div>
+
 
                             <div class="guarantee">
                                 <i class="bi bi-shield-check"></i>
@@ -367,21 +436,29 @@
 </main>
 <script>
     document.getElementById("btnEnroll").addEventListener("click", function () {
-        var courseId = this.getAttribute("data-course");
+
+        const courseId = this.dataset.course;
+        const price = parseFloat(this.dataset.price);
+        const notifyBox = document.getElementById("notifyBox");
+
+  
+        if (price > 0) {
+            window.location.href = "/Payment/Checkout?courseId=" + courseId;
+            return;
+        }
+
 
         fetch("/Enrollment/Enroll?courseId=" + courseId, {
             method: "POST"
         })
         .then(res => res.json())
         .then(data => {
-            let box = document.getElementById("notifyBox");
-
-            box.classList.remove("d-none");
-            box.classList.add("alert-info");
-            box.innerText = data.message;
+            notifyBox.className = "alert alert-info";
+            notifyBox.innerText = data.message;
+            notifyBox.classList.remove("d-none");
 
             setTimeout(() => {
-                box.classList.add("d-none");
+                notifyBox.classList.add("d-none");
             }, 2500);
         });
     });
